@@ -1,0 +1,23 @@
+.viewBalance ,.switchPrimary ,.switchAccount{
+  display:none;
+  position: absolute;
+  height:20vh;
+  width:40%;
+  border: solid black;
+  text-align: center;
+  margin-top: 20%;
+  margin-left:30%;
+  top: 10%;
+}
+
+.profile{
+  display:flux;
+  position: absolute;
+  height:20vh;
+  width:40%;
+  border: solid black;
+  text-align: center;
+  margin-top: 20%;
+  margin-left:30%;
+  top: 10%;
+}
