@@ -17,5 +17,18 @@
   	<servlet-name>ControllServlet</servlet-name>
   	<url-pattern>/page/*</url-pattern>
   </servlet-mapping>
+  
+  
+  <filter>
+  	<filter-name>SessionFilter</filter-name>
+  	<filter-class>filter.SessionFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+	  <filter-name>SessionFilter</filter-name>
+	  <url-pattern>/page/*</url-pattern>
+  </filter-mapping>
+  
+  
 
 </web-app>

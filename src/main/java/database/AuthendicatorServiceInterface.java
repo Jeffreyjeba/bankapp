@@ -2,10 +2,11 @@ package database;
 
 import org.json.JSONObject;
 import utility.BankException;
+import utility.InputDefectException;
 
 public interface AuthendicatorServiceInterface {
 
-	public String getAuthority(long id) throws BankException;
+	public String getAuthority(long id) throws BankException, InputDefectException;
 
 	public JSONObject getPassword(long userId) throws BankException;
 

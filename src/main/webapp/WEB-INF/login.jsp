@@ -17,9 +17,9 @@
         <h3>LOGIN</h3>
         <form action="LoginAuthendicate" method="post">
         	<label>USER ID</label><br>
-        	<input type="number"name="ID" placeholder="user id" class="box" required><br>
+        	<input type="number" min="1" step="1" name="id" placeholder="user id" class="box" required><br>
         	<label>PASSWORD</label><br>
-        	<input type="password" placeholder="password" name="PASSWORD" class="box" required><br>
+        	<input type="password" placeholder="password" name="password" class="box" required><br>
        		<button type="submit">LOGIN</button>
        		<div style="color:red">${errorMessage}</div>
        </form>

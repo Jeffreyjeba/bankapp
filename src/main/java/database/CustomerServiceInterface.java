@@ -36,9 +36,9 @@ public interface CustomerServiceInterface {
 
 	public void checkAccountPresence(long value, String field) throws BankException, InputDefectException;
 	
-	public int pageCount(long accountNumber,int quantity,long searchMilli) throws BankException ;
+	public int pageCount(long accountNumber,int quantity,long searchMilli) throws BankException, InputDefectException ;
 	
-	public JSONObject viewProfile(long id) throws BankException;
+	public JSONObject viewProfile(long id) throws BankException, InputDefectException;
 	
 	public JSONObject getPrimaryAccount(long id) throws BankException;
 	
@@ -50,4 +50,9 @@ public interface CustomerServiceInterface {
 	
 	public void creditDebitOutBank(TransactionHistory history) throws BankException;
 	
+	public JSONArray getTransactionHistory(long accountNumber,int quantity ,int page) throws BankException;
+
+	public int pageCount(long accountNumber,int quantity) throws BankException, InputDefectException ;
+	
+	public JSONObject getAccountDetails(long accountNumber) throws BankException, InputDefectException ;
 }

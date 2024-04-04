@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import query.Query;
 import query.QueryBuilderMySql;
 import utility.BankException;
+import utility.InputDefectException;
 import utility.UtilityHelper;
 
 public class AuthendicatorService extends DataStorageService implements AuthendicatorServiceInterface{
@@ -24,7 +25,7 @@ public class AuthendicatorService extends DataStorageService implements Authendi
 	Query builder=new QueryBuilderMySql();
 
 	@Override
-	public String getAuthority(long id) throws BankException {
+	public String getAuthority(long id) throws BankException, InputDefectException {
 		StringBuilder query= builder.selectFromWhere("users", "Id=" + id, "UserType");
 		JSONObject json = select(query);
 		return UtilityHelper.getString(json,"UserType");

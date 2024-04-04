@@ -43,10 +43,19 @@ public class Admin extends Employee {
 		checkForWorkersPresence(id);
 		admin.removeEmployee(id);
 	}
+	
+	public void activateEmployee(long id) throws BankException, InputDefectException {
+		checkForWorkersPresence(id);
+		admin.activateCustomer(id);
+	}
+	
+	public void inactivateEmployee(long id) throws BankException, InputDefectException {
+		checkForWorkersPresence(id);
+		admin.deactivateCustomer(id);
+	}
 
 	public JSONArray getAllBranchId() throws BankException, InputDefectException {
 		return admin.getAllBranchId();
-		
 	}
 
 	// checkers methods
@@ -66,7 +75,7 @@ public class Admin extends Employee {
 		admin.checkEmployeePrecence(employeeId, "Id");
 	}
 
-	private Employees jsonToEmployee(JSONObject employeeJson) throws BankException {
+	private Employees jsonToEmployee(JSONObject employeeJson) throws BankException, InputDefectException {
 		Employees employees = new Employees();
 		employees.setBranchId(UtilityHelper.getInt(employeeJson, "BranchId"));
 		employees.setId(UtilityHelper.getLong(employeeJson, "Id"));
@@ -74,7 +83,7 @@ public class Admin extends Employee {
 		return employees;
 	}
 
-	protected Branch jsonToBranch(JSONObject branchJson) throws BankException {
+	protected Branch jsonToBranch(JSONObject branchJson) throws BankException, InputDefectException {
 		Branch branch = new Branch();
 		branch.setAddress(UtilityHelper.getString(branchJson, "Address"));
 		branch.setBranchId(UtilityHelper.getInt(branchJson, "BranchId"));

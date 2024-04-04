@@ -6,6 +6,8 @@ import pojo.Accounts;
 import pojo.Customers;
 import pojo.Users;
 import utility.BankException;
+import utility.InputDefectException;
+import utility.UtilityHelper;
 
 
 public class EmployeeService extends CustomerService implements EmployeeServiceInterface{
@@ -64,6 +66,37 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 	public void deactivateCustomer(long id) throws BankException {
 		StringBuilder query=builder.setStatus("users", "inactive","Id");
 		update(query, id);
+	}
+	// new
+	public JSONObject getBranchDetail(long bankId) throws BankException {
+		StringBuilder query=new StringBuilder();
+		query.append("select * from branch where BranchId=");
+		query.append(bankId);
+		return select(query);
+	}
+	
+	public long activeAccount(long bankId) throws BankException, InputDefectException {
+		StringBuilder query=builder.selectAllCountFromWherePrep("accounts",
+					"BranchId= "+bankId+" and Status='active'");
+		return UtilityHelper.getInt(select(query),"count(*)");
+	}
+	
+	public long inactiveAccount(long bankId) throws BankException, InputDefectException {
+		StringBuilder query=builder.selectAllCountFromWherePrep("accounts",
+					"BranchId= "+bankId+" and Status='inactive'");
+		return UtilityHelper.getInt(select(query),"count(*)");
+	}
+	
+	public long deletedAccount(long bankId) throws BankException, InputDefectException {
+		StringBuilder query=builder.selectAllCountFromWherePrep("accounts",
+					"BranchId= "+bankId+" and Status='deleted'");
+		return UtilityHelper.getInt(select(query),"count(*)");
+	}
+	
+	public long totalAccounts(long bankId) throws BankException, InputDefectException {
+		StringBuilder query=builder.selectAllCountFromWherePrep("accounts",
+				"BranchId= "+bankId);
+	return UtilityHelper.getInt(select(query),"count(*)");
 	}
 
 

@@ -1,6 +1,8 @@
 package operations;
 
 
+import java.lang.annotation.Retention;
+
 import org.json.JSONObject;
 
 import bank.ServiceFactory;
@@ -12,6 +14,7 @@ import pojo.Users;
 import utility.BankException;
 import utility.InputDefectException;
 import utility.UtilityHelper;
+import utility.Validation;
 
 public class Employee extends Customer{
 	
@@ -21,6 +24,7 @@ public class Employee extends Customer{
 		UtilityHelper.nullCheck(userJson);
 		Users user=josnToUsers(userJson);
 		checkIdUserAbsence(user.getId());
+		validateUsers(userJson);
 		employee.addUsers(user);
 	}
 	public void addCustomers(JSONObject customerJson) throws BankException,InputDefectException{
@@ -29,6 +33,7 @@ public class Employee extends Customer{
 		long id=customer.getId();
 		checkIdUserPresence(id);
 		checkIdCustomerAbsence(id);
+		validateCustomer(customerJson);
 		employee.addCustomers(customer);
 	}
 	public void createAccount(JSONObject accountJson) throws BankException,InputDefectException {
@@ -38,21 +43,15 @@ public class Employee extends Customer{
 		checkIdCustomerPresence(account.getId());
 		employee.createAccount(account);
 	}
-	public void deleteAccount(JSONObject account) throws BankException,InputDefectException {
-		UtilityHelper.nullCheck(account);
-		long accountNumber=UtilityHelper.getLong(account,"AccountNumber");
+	public void deleteAccount(long accountNumber) throws BankException,InputDefectException {
 		checkAccNoForPresence(accountNumber);
 		employee.deleteAccount(accountNumber);
 	}
-	public void deactivateAccount(JSONObject account) throws BankException,InputDefectException  {
-		UtilityHelper.nullCheck(account);
-		long accountNumber=UtilityHelper.getLong(account,"AccountNumber");
+	public void deactivateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
 		employee.deactivateAccount(accountNumber);
 	}
-	public void activateAccount(JSONObject account) throws BankException,InputDefectException  {
-		UtilityHelper.nullCheck(account);
-		long accountNumber=UtilityHelper.getLong(account,"AccountNumber");
+	public void activateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
 		employee.activateAccount(accountNumber);
 	}
@@ -61,21 +60,32 @@ public class Employee extends Customer{
 		return employee.getBranch(id);
 	}
 	
-	public void activateCustomer(JSONObject customer) throws BankException, InputDefectException {
-		UtilityHelper.nullCheck(customer);
-		long id=UtilityHelper.getLong(customer,"Id");
+	public void activateCustomer(long id) throws BankException, InputDefectException {
 		checkIdCustomerPresence(id);
 		employee.activateCustomer(id);
 	}
 	
-	public void deactivateCustomer(JSONObject customer) throws BankException, InputDefectException {
-		UtilityHelper.nullCheck(customer);
-		long id=UtilityHelper.getLong(customer,"Id");
+	public void deactivateCustomer(long id) throws BankException, InputDefectException {
 		checkIdCustomerPresence(id);
 		employee.deactivateCustomer(id);
 	}
 	
-	protected Users josnToUsers(JSONObject userPojo) throws BankException {
+	
+	public JSONObject branchDetails(long branchId) throws BankException {
+	 	 return employee.getBranchDetail(branchId);
+	}
+	public JSONObject branchAccountDetails(long branchId) throws BankException, InputDefectException {
+	 	 long active=employee.activeAccount(branchId);
+	 	 long inactive=employee.inactiveAccount(branchId);
+	 	 long deleted=employee.deletedAccount(branchId);
+	 	 long total=employee.totalAccounts(branchId);
+	 	 JSONObject count =UtilityHelper.put(new JSONObject(),"active",active);
+	 	 UtilityHelper.put(count,"inactive",inactive);
+	 	 UtilityHelper.put(count,"total",total);
+	 	 return UtilityHelper.put(count,"deleted",deleted);
+	}
+	
+	protected Users josnToUsers(JSONObject userPojo) throws BankException, InputDefectException {
 		Users users=new Users();
 		users.setEmailId(UtilityHelper.getString(userPojo,"EmailId"));
 		users.setId(UtilityHelper.getLong(userPojo,"Id"));
@@ -85,7 +95,7 @@ public class Employee extends Customer{
 		return users;
 	}
 	
-	protected Customers josnToCustomers(JSONObject customerPojo) throws BankException {
+	protected Customers josnToCustomers(JSONObject customerPojo) throws BankException, InputDefectException {
 		Customers customer=new Customers();
 		customer.setAadharNumber(UtilityHelper.getLong(customerPojo,"AadharNumber"));
 		customer.setAddress(UtilityHelper.getString(customerPojo,"Address"));
@@ -94,7 +104,7 @@ public class Employee extends Customer{
 		return customer;
 	}
 	
-	protected Accounts jsonToAccounts(JSONObject accountPojo) throws BankException {
+	protected Accounts jsonToAccounts(JSONObject accountPojo) throws BankException, InputDefectException {
 		Accounts accounts=new Accounts();
 		accounts.setAccountNumber(UtilityHelper.getLong(accountPojo,"AccountNumber"));
 		accounts.setBalance(UtilityHelper.getLong(accountPojo,"Balance"));
@@ -102,5 +112,24 @@ public class Employee extends Customer{
 		accounts.setId(UtilityHelper.getLong(accountPojo,"Id"));
 		return accounts;
 	}
+	
+	protected void validateUsers(JSONObject json) throws BankException, InputDefectException {
+		 if(!Validation.validateEmail(UtilityHelper.getString(json,"EmailId"))) {
+			 throw new BankException("invalid Email Id");
+		 }
+		 if(! Validation.validatePhoenNo(Long.toString(UtilityHelper.getLong(json,"PhoneNumber")))) {
+			 throw new BankException("invalid Phone Number");
+		 }
+	}
+	
+	protected void validateCustomer(JSONObject json) throws BankException, InputDefectException {
+		 if(!Validation.validateAdharNumber(Long.toString(UtilityHelper.getLong(json,"AadharNumber")))) {
+			 throw new BankException("invalid Aadhar Number");
+		 }
+		 if(!Validation.validatePanNumber(UtilityHelper.getString(json,"PanNumber"))) {
+			 throw new BankException("invalid Pan Number");
+		 }
+	}
+	
 
 }

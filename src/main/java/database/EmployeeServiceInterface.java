@@ -1,10 +1,12 @@
 package database;
 
 import org.json.JSONObject;
+
 import pojo.Accounts;
 import pojo.Customers;
 import pojo.Users;
 import utility.BankException;
+import utility.InputDefectException;
 
 public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	
@@ -26,5 +28,15 @@ public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	public void activateCustomer(long id) throws BankException ;
 	
 	public void deactivateCustomer(long id) throws BankException ;
+	
+	public JSONObject getBranchDetail(long bankId) throws BankException ;
+	
+	public long activeAccount(long bankId) throws BankException, InputDefectException ;
+	
+	public long inactiveAccount(long bankId) throws BankException, InputDefectException ;
+	
+	public long deletedAccount(long bankId) throws BankException, InputDefectException ;
+	
+	public long totalAccounts(long bankId) throws BankException, InputDefectException ;
 	
 }

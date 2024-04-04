@@ -103,7 +103,8 @@ public class UtilityHelper {
 		return stringBuilder.toString();
 	}
 
-	public static JSONObject put(JSONObject json, String key, Long value) throws BankException {
+	public static JSONObject put(JSONObject json, String key, Long value) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			json.put(key, value);
 			return json;
@@ -112,7 +113,8 @@ public class UtilityHelper {
 		}
 	}
 
-	public static JSONObject put(JSONObject json, String key, int value) throws BankException {
+	public static JSONObject put(JSONObject json, String key, int value) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			json.put(key, value);
 			return json;
@@ -121,7 +123,8 @@ public class UtilityHelper {
 		}
 	}
 
-	public static JSONObject put(JSONObject json, String key, String value) throws BankException {
+	public static JSONObject put(JSONObject json, String key, String value) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			json.put(key, value);
 			return json;
@@ -131,7 +134,8 @@ public class UtilityHelper {
 		}
 	}
 	
-	public static JSONObject put(JSONObject json, String key, Object value) throws BankException {
+	public static JSONObject put(JSONObject json, String key, Object value) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			json.put(key, value);
 			return json;
@@ -141,7 +145,8 @@ public class UtilityHelper {
 		}
 	}
 	
-	public static JSONObject put(JSONObject json, String key, JSONArray value) throws BankException {
+	public static JSONObject put(JSONObject json, String key, JSONArray value) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			json.put(key, value);
 			return json;
@@ -150,7 +155,8 @@ public class UtilityHelper {
 		}
 	}
 
-	public static long getLong(JSONObject json, String key) throws BankException {
+	public static long getLong(JSONObject json, String key) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			return json.getLong(key);
 		} catch (JSONException e) {
@@ -158,7 +164,8 @@ public class UtilityHelper {
 		}
 	}
 
-	public static int getInt(JSONObject json, String key) throws BankException {
+	public static int getInt(JSONObject json, String key) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			return json.getInt(key);  
 		} catch (JSONException e) {
@@ -166,7 +173,8 @@ public class UtilityHelper {
 		}
 	}
 
-	public static String getString(JSONObject json, String key) throws BankException {
+	public static String getString(JSONObject json, String key) throws BankException, InputDefectException {
+		nullCheck(json);
 		try {
 			return json.getString(key);
 		} catch (JSONException e) {
@@ -174,7 +182,8 @@ public class UtilityHelper {
 		}
 	}
 	
-	public static JSONObject getJsonObject(JSONArray jArray,int index) throws BankException {
+	public static JSONObject getJsonObject(JSONArray jArray,int index) throws BankException, InputDefectException {
+		nullCheck(jArray);
 		try {
 			return jArray.getJSONObject(index);
 		} catch (JSONException e) {
