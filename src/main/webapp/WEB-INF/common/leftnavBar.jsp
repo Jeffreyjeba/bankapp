@@ -18,6 +18,8 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/profile">Profile</a>
     <br>
+    <a href="<%=request.getContextPath()%>/page/accountInfo">My Account</a>
+    <br>
     <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
     <br>
 </div>

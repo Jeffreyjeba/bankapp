@@ -236,6 +236,12 @@ input{
     background-color:rgba(58, 137, 211,0.5);
   }
 
+	.switchAccount table,th,td{
+		justify-content: center;
+	    align-items: center;
+		
+	}
+
   .moneyTransfer{
     display: flex;
     justify-content: center;

@@ -184,8 +184,9 @@ public class Customer {
 	}
 	
 	public JSONObject getAccountDetail(long accountNumber) throws BankException, InputDefectException {
-		customer.getAccountDetails(accountNumber);
-		return null;
+		checkAccNoForPresence(accountNumber);
+		return customer.getAccountDetails(accountNumber);
+	
 	}
 	
 	

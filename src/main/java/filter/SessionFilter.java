@@ -30,10 +30,10 @@ public class SessionFilter implements Filter {
 		HttpServletRequest req= (HttpServletRequest) request;
 		String path= req.getPathInfo();
 		System.out.println(path);
-		if(!path.equals("/login")) {
+		if(!path.equals("/LoginAuthendicate")) {
 			 HttpSession session =req.getSession(false);
-			 System.out.println(session);
-			if(session==null){
+			 String auth= (String) session.getAttribute("Auth");
+			if(auth==null){
 				request.setAttribute("errorMessage","you are logged out");
 				RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/login.jsp");
 				dispatcher.forward(request, response);

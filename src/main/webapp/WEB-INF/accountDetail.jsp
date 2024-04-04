@@ -1,3 +1,4 @@
+<%@page import="utility.BankException"%>
 <%@page import="utility.UtilityHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -17,32 +18,49 @@
 
      <jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
      <% JSONObject account=(JSONObject) request.getAttribute("accountDetail"); 
-		long accountNumber=UtilityHelper.getLong(account,"AccountNumber");
 		long branchId=UtilityHelper.getLong(account,"BranchId");
-     
-     
+     	long balance=UtilityHelper.getLong(account,"Balance");
+     	String status=UtilityHelper.getString(account,"Status");
+     	String priority;
+     	try{
+     		UtilityHelper.getString(account,"Priority");
+     		priority= "yes";
+     		}
+     	catch(BankException e){
+     		priority="no";
+     	}
+     	
      %>
      
 
     <div class="content">
 
-        <div class="credit">
-        
-            <form action="credit" method="post">
-                <div class="transaction" id="credit">
+        <div class="profile">
                    <table>
                     <tr><th><h3>Account</h3></th></tr>
-               		<tr><td><input name="amount" min="1" step="1" type="number"placeholder="Amount" required><br></td></tr>
-               		<tr><td><input name="description" title="No arrow characters" pattern="[^<>]*" type="text"placeholder="Description" required><br></td></tr>
-               		<tr><td><input name="password" type="password" placeholder="Password" required><br></td></tr>
-               		<tr><td><button type="submit">credit</button></td></tr>
+               		<tr> 
+               		 <td>Branch Id :</td>
+               		 <td><%=branchId %> </td>
+               		</tr>
+               		<tr> 
+               		 <td>Balance :</td>
+               		 <td><%=balance %> </td>
+               		</tr>
+               		<tr> 
+               		 <td>Status :</td>
+               		 <td><%=status %> </td>
+               		</tr>
+               		<tr> 
+               		 <td>primary Account :</td>
+               		 <td><%=priority %></td> 
+               		</tr>
+               		
                		<tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                   </table>
                 </div>
-            </form>
+                <jsp:include page="/WEB-INF/common/support.jsp" />
         </div>
-        <jsp:include page="/WEB-INF/common/support.jsp" />
-    </div>
+
 
 
   

@@ -244,7 +244,7 @@ public class CustomerService extends DataStorageService implements CustomerServi
 
 	@Override
 	public JSONObject getAccountDetails(long accountNumber) throws BankException, InputDefectException {
-		 StringBuilder accountQuery=builder.selectAllCountFromWherePrep("accounts","AccountNumber="+accountNumber);
+		 StringBuilder accountQuery=builder.selectAllFromWherePrep("accounts","AccountNumber="+accountNumber);
 		return select(accountQuery);
 	}
 

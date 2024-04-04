@@ -65,6 +65,11 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("path","switchAccountBalance");
 			balance(request, response);
 			break;
+		case "/switchAccountInfo":
+			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
+			request.setAttribute("path","switchAccountInfo");
+			accountDetail(request, response);
+			break;
 		case "/switchCredit":
 			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
 			request.setAttribute("path","switchCredit");
@@ -227,6 +232,10 @@ public class ControllServlet extends HttpServlet {
 			break;
 		case "/addBranch":
 			request.getRequestDispatcher("/WEB-INF/admin/addBranch.jsp").forward(request, response);
+			break;
+		case "/accountInfo":
+			request.setAttribute("path","switchAccountInfo");
+			accountDetail(request, response);
 			break;
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + path);
@@ -538,6 +547,21 @@ public class ControllServlet extends HttpServlet {
 	protected void historyPrevious(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
 		int page= Integer.parseInt(request.getParameter("page"));
 			history(request, response, --page);
+	}
+	
+	protected void accountDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		long accountNumber = (long) request.getSession().getAttribute("currentAccount");
+		try {
+			JSONObject account= customer.getAccountDetail(accountNumber);
+			System.out.println(account);
+			request.setAttribute("accountDetail", account);
+		}
+		catch (BankException | InputDefectException e) {
+			request.setAttribute("errorMessage", e.getMessage());
+		}
+		finally {
+			request.getRequestDispatcher("/WEB-INF/accountDetail.jsp").forward(request, response);
+		}
 	}
 
 

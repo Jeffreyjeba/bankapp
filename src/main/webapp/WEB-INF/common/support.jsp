@@ -6,9 +6,8 @@
 
         
         
-        
         <div class="support">
-            <div class="currentAccount">
+            <div class="switchAccount">
                
             <table>
                 <th>
@@ -18,7 +17,7 @@
                     <td>
                         Account Number :
                     </td>
-                    <td>
+                    <td >
                         <%=currentAccount %>
                     </td>
 

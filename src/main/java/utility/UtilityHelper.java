@@ -176,6 +176,7 @@ public class UtilityHelper {
 	public static String getString(JSONObject json, String key) throws BankException, InputDefectException {
 		nullCheck(json);
 		try {
+			System.out.println(key);
 			return json.getString(key);
 		} catch (JSONException e) {
 			throw new BankException(" Error level 2 conatct bank");

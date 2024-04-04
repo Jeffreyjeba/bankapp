@@ -45,9 +45,9 @@
 			</tr>
 
 			<div class="tableContent" id="switchPrimary">
-				<%	
+				<%if(jArray != null){
 						int length= jArray.length();
-		              for(int i=0;i<length;i++){
+		               for(int i=0;i<length;i++){
 		            	  JSONObject json=jArray.getJSONObject(i);
 		            	  long tid= UtilityHelper.getLong(json, "TransactionId");
 		            	  long accNo=UtilityHelper.getLong(json, "AccountNumber");
@@ -63,6 +63,7 @@
 		            		  tAccNo="-";
 		            	  }
 		            	  Instant ins= Instant.ofEpochMilli(tid);
+		              
 		            	  
 		       		%>
 				<tr>
@@ -75,10 +76,9 @@
 					<td><%= balance %></td>
 					<td><%= description %></td>
 				</tr>
-				<%}%>
+				<%} %>
+				<%} %>
 
-
-			<jsp:include page="/WEB-INF/common/error.jsp" />
 
 			</div>
 		</table>
@@ -94,5 +94,7 @@
 				<button type="submit">></button>
 			</form>
 		</div>
+		
+		
 </body>
 </html>
