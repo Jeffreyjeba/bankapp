@@ -18,8 +18,7 @@
      <jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
      <% JSONObject account=(JSONObject) request.getAttribute("accountDetail"); 
 		long accountNumber=UtilityHelper.getLong(account,"AccountNumber");
-		long BranchId=UtilityHelper.getLong(account,"BranchId");
-		
+		long branchId=UtilityHelper.getLong(account,"BranchId");
      
      
      %>
