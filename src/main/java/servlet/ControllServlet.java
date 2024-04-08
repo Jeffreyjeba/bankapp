@@ -371,6 +371,9 @@ public class ControllServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			long accountNumber = (long) session.getAttribute("currentAccount");
 			long id = (long) session.getAttribute("id");
+			if(!session.getAttribute("auth").equals("customer")) {
+				id= (long) session.getAttribute("empId");
+			}
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
@@ -398,6 +401,9 @@ public class ControllServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			long accountNumber = (long) session.getAttribute("currentAccount");
 			long id = (long) session.getAttribute("id");
+			if(!session.getAttribute("auth").equals("customer")) {
+				id= (long) session.getAttribute("empId");
+			}
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
@@ -424,6 +430,9 @@ public class ControllServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			long accountNumber = (long) session.getAttribute("currentAccount");
 			long id = (long) session.getAttribute("id");
+			if(!session.getAttribute("auth").equals("customer")) {
+				id= (long) session.getAttribute("empId");
+			}
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
@@ -469,11 +478,14 @@ public class ControllServlet extends HttpServlet {
 		try {
 			HttpSession session = request.getSession();
 			long id = (long) session.getAttribute("id");
+			if(!session.getAttribute("auth").equals("customer")) {
+				id= (long) session.getAttribute("empId");
+			}
 			String oldPass = request.getParameter("oldPass");
-			String newPass = request.getParameter("NewPass");
+			String newPass = request.getParameter("newPass");
 			String confoPass = request.getParameter("confoPass");
 			if (auth.checkPassword(id, oldPass)) {
-				if (newPass != confoPass) {
+				if (!newPass.equals(confoPass)) {
 					throw new BankException("new pass words do not match");
 				}
 				JSONObject pass = UtilityHelper.put(new JSONObject(), "Password", newPass);
@@ -546,7 +558,7 @@ public class ControllServlet extends HttpServlet {
 		long accountNumber = (long) request.getSession().getAttribute("currentAccount");
 		try {
 			JSONObject account= customer.getAccountDetail(accountNumber);
-			System.out.println(account);
+
 			request.setAttribute("accountDetail", account);
 		}
 		catch (BankException | InputDefectException e) {
@@ -815,7 +827,6 @@ public class ControllServlet extends HttpServlet {
 	protected void adminDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			int branchId=(int) request.getSession().getAttribute("branchId");
-			System.out.println(branchId);
 			JSONObject branch= admin.branchDetails(branchId);
 			JSONObject branchAccount=admin.branchAccountDetails(branchId);
 			request.setAttribute("branch", branch);
@@ -840,7 +851,6 @@ public class ControllServlet extends HttpServlet {
 		UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
 		UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
 		UtilityHelper.put(json,"UserType",type);
-		System.out.println(json);
 		admin.addUsers(json);
 		
 		JSONObject json2= new JSONObject();

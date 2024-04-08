@@ -15,9 +15,10 @@
     <jsp:include page="/WEB-INF/common/commonHeader.jsp" />
 	<jsp:include page="/WEB-INF/common/EleftnavBar.jsp" />
 	
-	<%JSONObject branch=(JSONObject) request.getAttribute("branch");
+	<%
+	  JSONObject branch=(JSONObject) request.getAttribute("branch");
 	  JSONObject branchAccount=(JSONObject) request.getAttribute("branchAccount");
-	  %>
+	 %>
 	  
 	
 	
@@ -58,7 +59,7 @@
                         for(int temp=0;length>temp;temp++){
                         int temp2=allBranch.getJSONObject(temp).getInt("BranchId");%>
                         			
-                            <option><%=temp2%><option>
+                            <option><%=temp2%></option>
                             <%} %> 
                         </select>
                         

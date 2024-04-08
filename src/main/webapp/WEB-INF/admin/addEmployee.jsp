@@ -15,7 +15,7 @@
     <jsp:include page="/WEB-INF/common/EleftnavBar.jsp" />
 
   <div class="content">
-        <div class="addCustomer">
+        <div class="addAuth">
             <form action="addAuthority" method="post">
                 <div class="transaction" id="moneyTransfer">
                  <table>	
@@ -30,6 +30,10 @@
 	                     <option>employee</option>
 	                     <option>admin</option>
                      </select></td></tr>
+                     <tr></tr>
+                     <tr></tr>
+                     <tr></tr>
+                     <tr></tr>
                     <tr><td><button type="submit">Add</button></td></tr>
                      <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
              	</table>
