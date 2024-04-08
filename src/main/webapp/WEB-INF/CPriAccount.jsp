@@ -34,7 +34,7 @@
 			<div class="switchAccount">
 
 				<table>
-					<th>Switch Primary Account</th>
+					<th>Switch Primary</th>
 					<tr>
 						<td>Account Number :</td>
 						<td>

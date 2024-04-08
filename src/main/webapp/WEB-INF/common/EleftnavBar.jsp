@@ -44,7 +44,6 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
     <br>
-    <!-- /Eprofile -->
     <a href="<%=request.getContextPath()%>/page/addAuthority">Add Authority</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/addBranch">Add Branch</a>

@@ -6,7 +6,6 @@
     position:relative;
     text-align: center;
     margin: 40px;
-    /* text-shadow: 3px 3px 15px; */
     color: rgb(3, 20, 37);
     font-size: xx-large;
 }
@@ -38,24 +37,6 @@ body{
     border-radius:10%;
 }
 
-/* .transaction{
-    display: flex;
-   	justify-content: center;
-    flex-wrap: wrap;
-     to monireflex-direction: column; 
-    position:relative;
-    align-items: center;
-    text-align: center;
-    width: 30%;
-    height: 50vh;
-    margin: auto;
-    margin-top:25vh;
-    margin-bottom:10vh;
-    margin-left:60%;
-    background-color: rgba(58, 137, 211,0.4);
-    border-radius:10%;
-}
- */
 img{
     display: flex;
     position:absolute;

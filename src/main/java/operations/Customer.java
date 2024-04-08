@@ -160,7 +160,7 @@ public class Customer {
 		if(json==null) {
 			tagPrimaryAccount(id);
 			getPrimaryAccount(id);
-		
+			return customer.getPrimaryAccount(id);
 		}
 		return json;
 	}

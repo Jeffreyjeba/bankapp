@@ -16,11 +16,6 @@
 
     <div class="buttons">
         <div class="buttons1">
-            <button>About us</button><br>
-            <button>contact us</button><br>
-            <button>other details</button><br>
-        </div>
-        <div class="buttons1">
            <a href="<%=request.getContextPath()%>/page/login"><button>Login</button></a><br>
         </div>
     </div>

@@ -21,10 +21,8 @@
 
 
     <div class="content">
-
-        <div class="debit">
+        <div class="inputBox">
             <form action="debit" method="post">
-                <div class="transaction" id="debit">
 	                   <table>
 	                    <tr><th><h3>DEBIT</h3></th></tr>
 	               		<tr><td><input name="amount" min="1" step="1" type="number"placeholder="Amount" required><br></td></tr>
@@ -33,7 +31,6 @@
 	               		<tr><td><button type="submit">Debit</button></td></tr>
 	               		<tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
 	                  </table>
-                </div>
             </form>
         </div>
         <jsp:include page="/WEB-INF/common/support.jsp" />

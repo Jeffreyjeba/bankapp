@@ -27,7 +27,7 @@
 		                    <tr><td><input name="phoneNumber" title="enter a valid phone Number" type="text"placeholder="Phone Number" pattern="^[7-9]{1}[0-9]{9}$" required></td></tr>
 		                    <tr><td><input name="aadhar" min="100000000000" max="999999999999" step="1" type="number" placeholder="Aadhar Number" required></td></tr>
 		                    <tr><td><input name="pan" title="Enter a valid pan number" type="text" placeholder="Pan Number" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$" required></td></tr>
-		                    <tr><td><input name="address" title="NO arrow Brackets" type="text" placeholder="Address" pattern="[^<>]" required></td></tr>
+		                    <tr><td><input name="address" title="NO arrow Brackets" type="text" placeholder="Address" pattern="[^<>]*" required></td></tr>
 		                    <tr><td><button type="submit">Add</button></td></tr>
 		                    <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
 		                </table>

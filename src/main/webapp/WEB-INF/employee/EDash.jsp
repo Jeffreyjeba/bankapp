@@ -47,20 +47,26 @@
 			 
 			%>
                 <tr>
+                <form action="initialDetail" method="post">
                 	<td>BranchId
                 	     
                     <td>
-                        <select>
+                    
+                        <select name="branchId">
                         <% 
                         int length=allBranch.length();
-                        for(int temp=0;length>temp;temp++){%>
-                            <option><%=allBranch.getJSONObject(temp).getLong("BranchId")%><option>
+                        for(int temp=0;length>temp;temp++){
+                        int temp2=allBranch.getJSONObject(temp).getInt("BranchId");%>
+                        			
+                            <option><%=temp2%><option>
                             <%} %> 
                         </select>
+                        
                     </td>
                     <td>
-                        <a href="">switch</a>
+                        <button onclick="submit">switch</button>
                     </td>
+                    </form>
                 </tr>
                 <%} %>
 

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tomcat.dbcp.dbcp2.Jdbc41Bridge;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,13 +27,7 @@ public class ControllServlet extends HttpServlet {
 		String path = request.getPathInfo();
 		switch (path) {
 		case "/LoginAuthendicate":
-			try {
-				loginAuthendicate(request, response);
-			} catch (InputDefectException e) {
-				e.printStackTrace();
-			} catch (BankException e) {
-				e.printStackTrace();
-			}
+			loginAuthendicate(request, response);
 			break;
 		case "/switchPrimary":
 			switchPrimary(request, response);
@@ -86,7 +79,13 @@ public class ControllServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
 			break;
 		case "/initialDetail":
-			employeeDashboard(request, response);
+			if(request.getSession().getAttribute("auth").equals("employee")){
+				employeeDashboard(request, response);
+			}
+			else {
+				request.getSession().setAttribute("branchId",Integer.parseInt(request.getParameter("branchId")));
+				adminDashboard(request, response);
+			}
 			break;
 		case "/addCustomer":
 			addCustomer(request, response);
@@ -95,23 +94,12 @@ public class ControllServlet extends HttpServlet {
 			addAccount(request, response);
 			break;
 		case "/activateAccount":
-			request.setAttribute("function","activate");
-			accountStatus(request, response);
-			break;
 		case "/deactivateAccount":
-			request.setAttribute("function","inactivate");
-			accountStatus(request, response);
-			break;
 		case "/deleteAccount":
-			request.setAttribute("function","delete");
 			accountStatus(request, response);
 			break;
 		case "/activateCustomer":
-			request.setAttribute("function","activate");
-			customerStatus(request, response);
-			break;
 		case "/deactivateCustomer":
-			request.setAttribute("function","inactivate");
 			customerStatus(request, response);
 			break;
 		case "/connectCustomer":
@@ -153,20 +141,19 @@ public class ControllServlet extends HttpServlet {
 			break;
 		case "/balance":
 		case "/viewBalance":
-			request.setAttribute("path","switchAccountBalance");
+			request.setAttribute("path","switchAccountBalance"); 
 			balance(request, response);
 			break;
 		case "/credit":
-			request.setAttribute("path","switchCredit");
+			 request.setAttribute("path","switchCredit"); 
 			request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
 			break;
 		case "/debit":
-			request.setAttribute("path","switchDebit");
+			 request.setAttribute("path","switchDebit"); 
 			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
 			break;
 		case "/moneyTransfer":
 			request.setAttribute("path","switchMoneyTransfer");
-			request.setAttribute("path","switchCredit");
 			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
 			break;
 		case "/resetPassword":
@@ -253,16 +240,23 @@ public class ControllServlet extends HttpServlet {
 
 	Authenticator auth = new Authenticator();
 
-	protected void loginAuthendicate(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, InputDefectException, BankException {
-		long id = Integer.parseInt(request.getParameter("id"));
-		String password = request.getParameter("password");
-		boolean access = auth.checkPassword(id, password);
-		if (access) {
-			request.getSession().setAttribute("id", id);
-			authorize(id, request, response);
-		} else {
-			request.setAttribute("errorMessage", "wrong combination try again");
+	protected void loginAuthendicate(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		try {
+			long id = Integer.parseInt(request.getParameter("id"));
+			String password = request.getParameter("password");
+			boolean access = auth.checkPassword(id, password);
+			if (access) {
+				request.getSession().setAttribute("id", id);
+				auth.validateUser(id);
+				authorize(id, request, response);
+			}
+			else {
+				request.setAttribute("errorMessage", "wrong combination try again");
+				login(request, response);
+			}
+		}
+		catch(InputDefectException | BankException e) {
+			request.setAttribute("errorMessage", e.getMessage());
 			login(request, response);
 		}
 	}
@@ -296,7 +290,6 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		long id = (long) request.getSession().getAttribute("id");
 		try {
-			/* JSONObject profile = customer.viewProfile(id); */
 			long[] accounts = customer.getAccounts(id);
 			long primary = UtilityHelper.getLong(customer.getPrimaryAccount(id), "AccountNumber");
 			HttpSession session = request.getSession();
@@ -638,7 +631,7 @@ public class ControllServlet extends HttpServlet {
 		
 		employee.addUsers(json);
 		employee.addCustomers(json2);
-		request.setAttribute("successMessage", "debit successfull");
+		request.setAttribute("successMessage", "Customer Added ");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
@@ -683,7 +676,7 @@ public class ControllServlet extends HttpServlet {
 	}
 	
 	protected void accountStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String function=(String) request.getAttribute("function");
+		String function=request.getParameter("function");
 		String password=request.getParameter("password");
 		long empId=(long) request.getSession().getAttribute("empId");
 		try {
@@ -742,7 +735,7 @@ public class ControllServlet extends HttpServlet {
 	}
 		
 	protected void customerStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String function=(String) request.getAttribute("function");
+		String function=request.getParameter("function");
 		String password=request.getParameter("password");
 		long empId=(long) request.getSession().getAttribute("empId");
 		try {
@@ -753,7 +746,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long id= Long.parseLong(request.getParameter("id"));
 						employee.activateCustomer(id);
-						request.setAttribute("successMessage", "account Activated");
+						request.setAttribute("successMessage", "customer Activated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
@@ -766,7 +759,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long id= Long.parseLong(request.getParameter("id"));
 						employee.deactivateCustomer(id);
-						request.setAttribute("successMessage", "account Deactivated");
+						request.setAttribute("successMessage", "Customer Deactivated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
@@ -822,6 +815,7 @@ public class ControllServlet extends HttpServlet {
 	protected void adminDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			int branchId=(int) request.getSession().getAttribute("branchId");
+			System.out.println(branchId);
 			JSONObject branch= admin.branchDetails(branchId);
 			JSONObject branchAccount=admin.branchAccountDetails(branchId);
 			request.setAttribute("branch", branch);
@@ -832,7 +826,7 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-		request.getRequestDispatcher("/WEB-INF/employee/EDash.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/employee/EDash.jsp").forward(request, response);
 		}
 	}
 	
@@ -928,7 +922,4 @@ public class ControllServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
 	}
 	}
-	
-	
-	
 }

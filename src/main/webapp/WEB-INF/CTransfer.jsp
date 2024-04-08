@@ -26,6 +26,7 @@
                    <tr><td><input name="description" type="text" title="No arrow characters" pattern="[^<>]*" placeholder="Description" required></td></tr>
                    <tr><td> <input name="password" type="password" placeholder="Password" required></td></tr>
                    <tr><td> <button type="submit">transfer</button></td></tr>
+                   <tr><td><jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
                 </div>
             </form>

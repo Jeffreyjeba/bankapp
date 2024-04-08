@@ -21,7 +21,7 @@
 
 
     <div class="content">
-            <div class="support">
+           <div class="support">
             <div class="currentAccount">
                
             <table>
@@ -68,6 +68,7 @@
                 </table>
             </div>
         </div>
+        <jsp:include page="/WEB-INF/common/error.jsp" />
     </div>
 
 

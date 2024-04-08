@@ -22,6 +22,7 @@
                     <tr><th><h3>ACTIVATE CUSTOMER</h3></th></tr>
                     <tr><td><input name="id" type="number" placeholder="Id" required></td></tr>
                     <tr><td><input name="password" type="password" placeholder="Password" required></td></tr>
+                    <tr><td><input name="function" value="activate" type="hidden"></td></tr>
                     <tr><td><button type="submit">Activate</button></td></tr>
                     <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
@@ -38,9 +39,10 @@
                     <tr><th><h3>DEACTIVATE CUSTOMER</h3></th></tr>
                     <tr><td><input name="id" type="number" placeholder="Id" required><tr><td>
                     <tr><td><input name="password" type="password" placeholder="Password" required><tr><td>
+                    <tr><td><input name="function" value="inactivate" type="hidden"></td></tr>
                     <tr><td><button type="submit">Deactive</button><tr><td>
+                     <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                  </table>
-                     <jsp:include page="/WEB-INF/common/error.jsp" />
             </form>
         </div>
     </div>

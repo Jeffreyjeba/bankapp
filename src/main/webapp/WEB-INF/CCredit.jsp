@@ -16,11 +16,8 @@
      
 
     <div class="content">
-
-        <div class="credit">
-        
+        <div class="inputBox">
             <form action="credit" method="post">
-                <div class="transaction" id="credit">
                    <table>
                     <tr><th><h3>CREDIT</h3></th></tr>
                		<tr><td><input name="amount" min="1" step="1" type="number"placeholder="Amount" required><br></td></tr>
@@ -29,7 +26,6 @@
                		<tr><td><button type="submit">credit</button></td></tr>
                		<tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                   </table>
-                </div>
             </form>
         </div>
         <jsp:include page="/WEB-INF/common/support.jsp" />

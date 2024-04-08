@@ -22,9 +22,11 @@
             	<tr><th><h3>ACTIVATE ACCOUNT</h3></th></tr>
                  <tr><td><input name="accountNumber" min="1" step="1" type="number" placeholder="Account Number" required></td></tr>
                  <tr><td><input name="password" type="password" placeholder="Password" required></td></tr>
+                 <tr><td><input name="function" value="activate" type="hidden"></td></tr>
                  <tr><td><button type="submit">Activate</button></td></tr>
+                 <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
-                    <jsp:include page="/WEB-INF/common/error.jsp" />
+                   
             </form>
         </div>
     </div>
@@ -38,6 +40,7 @@
             	<tr><th><h3>DEACTIVATE ACCOUNT</h3></th></tr>
                  <tr><td><input name="accountNumber" min="1" step="1" type="number" placeholder="Account Number" required></td></tr>
                  <tr><td><input name="password" type="password" placeholder="Password" required></td></tr>
+                 <tr><td><input name="function" value="inactivate" type="hidden"></td></tr>
                  <tr><td><button type="submit">Deactive</button></td></tr>
                   <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
@@ -55,6 +58,7 @@
             	<tr><th><h3>DELETE ACCOUNT</h3></th></tr>
                  <tr><td><input name="accountNumber" min="1" step="1" type="number" placeholder="Account Number" required></td></tr>
                  <tr><td><input name="password" type="password" placeholder="Password" required></td></tr>
+                 <tr><td><input name="function" value="delete" type="hidden"></td></tr>
                  <tr><td><button type="submit">Delete</button></td></tr>
                  <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
