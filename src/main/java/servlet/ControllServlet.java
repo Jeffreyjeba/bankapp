@@ -24,214 +24,222 @@ public class ControllServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		String path = request.getPathInfo();
-		switch (path) {
-		case "/LoginAuthendicate":
-			loginAuthendicate(request, response);
-			break;
-		case "/switchPrimary":
-			switchPrimary(request, response);
-			break;
-		case "/changePassword":
-			changePassword(request, response);
-			break;
-		case "/switchAccount":
-			switchAccount(request, response);
-			break;
-		case "/credit":
-			credit(request, response);
-			break;
-		case "/debit":
-			debit(request, response);
-			break;
-		case "/transfer":
-			moneyTransfer(request, response);
-			break;
-		case "/changeAccount":
-			switchAccount(request, response);
-			break;
-		case "/primaryAccount":
-			switchPrimary(request, response);
-			break;
-		case "/switchAccountBalance":
-			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			request.setAttribute("path","switchAccountBalance");
-			balance(request, response);
-			break;
-		case "/switchAccountInfo":
-			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			request.setAttribute("path","switchAccountInfo");
-			accountDetail(request, response);
-			break;
-		case "/historySwitch":
-			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			history(request, response, 1);
-			break;
-		/*
-		 * case "/switchCredit": request.getSession().setAttribute("currentAccount",
-		 * Long.parseLong(request.getParameter("account")));
-		 * request.setAttribute("path","switchCredit");
-		 * request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request,
-		 * response); break; case "/switchDebit":
-		 * request.getSession().setAttribute("currentAccount",
-		 * Long.parseLong(request.getParameter("account")));
-		 * request.setAttribute("path","switchDebit");
-		 * request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request,
-		 * response); break; case "/switchMoneyTransfer":
-		 * request.getSession().setAttribute("currentAccount",
-		 * Long.parseLong(request.getParameter("account")));
-		 * request.setAttribute("path","switchMoneyTransfer");
-		 * request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request,
-		 * response); break;
-		 */
-		case "/initialDetail":
-			if(request.getSession().getAttribute("auth").equals("employee")){
-				employeeDashboard(request, response);
+		try {
+			String path = request.getPathInfo();
+			switch (path) {
+			case "/LoginAuthendicate":
+				loginAuthendicate(request, response);
+				break;
+			case "/switchPrimary":
+				switchPrimary(request, response);
+				break;
+			case "/changePassword":
+				changePassword(request, response);
+				break;
+			case "/switchAccount":
+				switchAccount(request, response);
+				break;
+			case "/credit":
+				credit(request, response);
+				break;
+			case "/debit":
+				debit(request, response);
+				break;
+			case "/transfer":
+				moneyTransfer(request, response);
+				break;
+			case "/changeAccount":
+				switchAccount(request, response);
+				break;
+			case "/primaryAccount":
+				switchPrimary(request, response);
+				break;
+			case "/switchAccountBalance":
+				request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
+				request.setAttribute("path","switchAccountBalance");
+				balance(request, response);
+				break;
+			case "/switchAccountInfo":
+				request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
+				request.setAttribute("path","switchAccountInfo");
+				accountDetail(request, response);
+				break;
+			case "/historySwitch":
+				request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
+				history(request, response, 1);
+				break;
+				/*
+				 * case "/switchCredit": request.getSession().setAttribute("currentAccount",
+				 * Long.parseLong(request.getParameter("account")));
+				 * request.setAttribute("path","switchCredit");
+				 * request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request,
+				 * response); break; case "/switchDebit":
+				 * request.getSession().setAttribute("currentAccount",
+				 * Long.parseLong(request.getParameter("account")));
+				 * request.setAttribute("path","switchDebit");
+				 * request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request,
+				 * response); break; case "/switchMoneyTransfer":
+				 * request.getSession().setAttribute("currentAccount",
+				 * Long.parseLong(request.getParameter("account")));
+				 * request.setAttribute("path","switchMoneyTransfer");
+				 * request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request,
+				 * response); break;
+				 */
+			case "/initialDetail":
+				if(request.getSession().getAttribute("auth").equals("employee")){
+					employeeDashboard(request, response);
+				}
+				else {
+					request.getSession().setAttribute("branchId",Integer.parseInt(request.getParameter("branchId")));
+					adminDashboard(request, response);
+				}
+				break;
+			case "/addCustomer":
+				addCustomer(request, response);
+				break;
+			case "/addAccount":
+				addAccount(request, response);
+				break;
+			case "/activateAccount":
+			case "/deactivateAccount":
+			case "/deleteAccount":
+				accountStatus(request, response);
+				break;
+			case "/activateCustomer":
+			case "/deactivateCustomer":
+				customerStatus(request, response);
+				break;
+			case "/connectCustomer":
+				bridge(request, response);
+				break;
+			case "/addAuthority":
+				addAuthority(request, response);
+				break;
+			case "/employeeStatus":
+				employeeStatus(request, response);
+				break;
+			case "/addBranch":
+				addBranch(request, response);
+				break;
+			case "/nextPage":
+				historyNext(request, response);
+				break;
+			case "/previousPage":
+				historyPrevious(request, response);
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + path);
 			}
-			else {
-				request.getSession().setAttribute("branchId",Integer.parseInt(request.getParameter("branchId")));
-				adminDashboard(request, response);
-			}
-			break;
-		case "/addCustomer":
-			addCustomer(request, response);
-			break;
-		case "/addAccount":
-			addAccount(request, response);
-			break;
-		case "/activateAccount":
-		case "/deactivateAccount":
-		case "/deleteAccount":
-			accountStatus(request, response);
-			break;
-		case "/activateCustomer":
-		case "/deactivateCustomer":
-			customerStatus(request, response);
-			break;
-		case "/connectCustomer":
-			bridge(request, response);
-			break;
-		case "/addAuthority":
-			addAuthority(request, response);
-			break;
-		case "/employeeStatus":
-			employeeStatus(request, response);
-			break;
-		case "/addBranch":
-			addBranch(request, response);
-			break;
-		case "/nextPage":
-			historyNext(request, response);
-			break;
-		case "/previousPage":
-			historyPrevious(request, response);
-			break;
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + path);
+		}
+		finally {
+
 		}
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String path = request.getPathInfo();
-		// System.out.println(path);
-		switch (path) {
-		case "/logout":
-			logout(request, response);
-			break;
-		case "/login":
-			login(request, response);
-			break;
-		case "/home":
-			home(request, response);
-			break;
-		case "/balance":
-		case "/viewBalance":
-			request.setAttribute("path","switchAccountBalance"); 
-			balance(request, response);
-			break;
-		case "/credit":
-			 request.setAttribute("path","switchCredit"); 
-			request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
-			break;
-		case "/debit":
-			 request.setAttribute("path","switchDebit"); 
-			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
-			break;
-		case "/moneyTransfer":
-			request.setAttribute("path","switchMoneyTransfer");
-			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
-			break;
-		case "/resetPassword":
-			request.getRequestDispatcher("/WEB-INF/CPassword.jsp").forward(request, response);
-			break;
-		case "/changeAccount":
-			request.getRequestDispatcher("/WEB-INF/accountSwitch.jsp").forward(request, response);
-			break;
-		case "/primaryAccount":
-			primaryAccount(request, response);
-			break;
-		case "/profile":
-			profile(request, response);
-			break;
-		case "/transactionHistory":
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		try {
+			String path = request.getPathInfo();
+			switch (path) {
+			case "/logout":
+				logout(request, response);
+				break;
+			case "/login":
+				login(request, response);
+				break;
+			case "/home":
+				home(request, response);
+				break;
+			case "/balance":
+			case "/viewBalance":
+				request.setAttribute("path","switchAccountBalance"); 
+				balance(request, response);
+				break;
+			case "/credit":
+				request.setAttribute("path","switchCredit"); 
+				request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
+				break;
+			case "/debit":
+				request.setAttribute("path","switchDebit"); 
+				request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
+				break;
+			case "/moneyTransfer":
+				request.setAttribute("path","switchMoneyTransfer");
+				request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
+				break;
+			case "/resetPassword":
+				request.getRequestDispatcher("/WEB-INF/CPassword.jsp").forward(request, response);
+				break;
+			case "/changeAccount":
+				request.getRequestDispatcher("/WEB-INF/accountSwitch.jsp").forward(request, response);
+				break;
+			case "/primaryAccount":
+				primaryAccount(request, response);
+				break;
+			case "/profile":
+				profile(request, response);
+				break;
+			case "/transactionHistory":
 				history(request, response,1);
-			break;
-		case "/addCustomer":
-			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);
-			break;
-		case "/addAccount":
-			addAccountGet(request, response);
-			break;
-		case "/activateAccount":
-			request.setAttribute("function","activate");
-			request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
-			break;
-		case "/deactivateAccount":
-			request.setAttribute("function","inactivate");
-			request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
-			break;
-		case "/deleteAccount":
-			request.setAttribute("function","delete");
-			request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
-			break;
-		case "/activateCustomer":
-			request.setAttribute("function","activate");
-			request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
-			break;
-		case "/deactivateCustomer":
-			request.setAttribute("function","inactivate");
-			request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
-			break;
-		case "/initialDetail":
-			if(request.getSession().getAttribute("auth").equals("employee")){
-				employeeDashboard(request, response);
+				break;
+			case "/addCustomer":
+				request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);
+				break;
+			case "/addAccount":
+				addAccountGet(request, response);
+				break;
+			case "/activateAccount":
+				request.setAttribute("function","activate");
+				request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
+				break;
+			case "/deactivateAccount":
+				request.setAttribute("function","inactivate");
+				request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
+				break;
+			case "/deleteAccount":
+				request.setAttribute("function","delete");
+				request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
+				break;
+			case "/activateCustomer":
+				request.setAttribute("function","activate");
+				request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
+				break;
+			case "/deactivateCustomer":
+				request.setAttribute("function","inactivate");
+				request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
+				break;
+			case "/initialDetail":
+				if(request.getSession().getAttribute("auth").equals("employee")){
+					employeeDashboard(request, response);
+				}
+				else {
+					adminDashboard(request, response);
+				}
+				break;
+			case "/bridge":
+				request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
+				break;
+			case "/Eprofile":
+				employeeProfile(request, response);
+				break;
+			case "/addAuthority":
+				request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
+				break;
+			case "/manageEmployee":
+				request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
+				break;
+			case "/addBranch":
+				request.getRequestDispatcher("/WEB-INF/admin/addBranch.jsp").forward(request, response);
+				break;
+			case "/accountInfo":
+				request.setAttribute("path","switchAccountInfo");
+				accountDetail(request, response);
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + path);
 			}
-			else {
-				adminDashboard(request, response);
-			}
-			break;
-		case "/bridge":
-			request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
-			break;
-		case "/Eprofile":
-			employeeProfile(request, response);
-			break;
-		case "/addAuthority":
-			request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
-			break;
-		case "/manageEmployee":
-			request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
-			break;
-		case "/addBranch":
-			request.getRequestDispatcher("/WEB-INF/admin/addBranch.jsp").forward(request, response);
-			break;
-		case "/accountInfo":
-			request.setAttribute("path","switchAccountInfo");
-			accountDetail(request, response);
-			break;
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + path);
+		}
+		finally {
+
 		}
 	}
 
@@ -300,8 +308,8 @@ public class ControllServlet extends HttpServlet {
 			long primary = UtilityHelper.getLong(customer.getPrimaryAccount(id), "AccountNumber");
 			HttpSession session = request.getSession();
 			if(session.getAttribute("auth")==null) {
-			 session.setAttribute("auth", "customer");
-			 }
+				session.setAttribute("auth", "customer");
+			}
 			session.setAttribute("currentAccount", primary);
 			session.setAttribute("accounts", accounts);
 			customerDashboard(request, response);
@@ -312,8 +320,8 @@ public class ControllServlet extends HttpServlet {
 	}
 
 	Customer customer = new Customer();
-	
-	
+
+
 
 
 	protected void customerDashboard(HttpServletRequest request, HttpServletResponse response)
@@ -342,7 +350,7 @@ public class ControllServlet extends HttpServlet {
 		finally {
 			request.getRequestDispatcher("/WEB-INF/CPriAccount.jsp").forward(request, response);
 		}
-		
+
 	}
 
 	protected void switchPrimary(HttpServletRequest request, HttpServletResponse response)
@@ -434,6 +442,7 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			HttpSession session = request.getSession();
+			/* System.out.println(session.getId()); */
 			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long id = (long) session.getAttribute("id");
 			if(!session.getAttribute("auth").equals("customer")) {
@@ -520,7 +529,7 @@ public class ControllServlet extends HttpServlet {
 		finally {
 			request.getRequestDispatcher("/WEB-INF/CProfile.jsp").forward(request, response);
 		}
-			
+
 	}
 
 	protected void history(HttpServletRequest request, HttpServletResponse response,int page )throws IOException, ServletException {
@@ -548,23 +557,23 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-			
+
 			request.setAttribute("jArray", jArray);
 			request.setAttribute("currentPage",page);
 			request.getRequestDispatcher("/WEB-INF/CHistory.jsp").forward(request, response);
 		}
 	}
-	
+
 	protected void historyNext(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		int page= Integer.parseInt(request.getParameter("page"));
 		history(request, response, ++page);
 	}
-	
+
 	protected void historyPrevious(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
 		int page= Integer.parseInt(request.getParameter("page"));
-			history(request, response, --page);
+		history(request, response, --page);
 	}
-	
+
 	protected void accountDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		long accountNumber = (long) request.getSession().getAttribute("currentAccount");
 		try {
@@ -582,11 +591,11 @@ public class ControllServlet extends HttpServlet {
 
 
 	// EMPLOYEE
-	
-	
+
+
 	Employee employee = new Employee();
 	Admin admin=new Admin();
-	
+
 	protected void employeeDetail(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		long id = (long) request.getSession().getAttribute("id");
@@ -603,7 +612,7 @@ public class ControllServlet extends HttpServlet {
 			login(request, response);
 		}
 	}
-	
+
 
 	protected void employeeDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
@@ -617,11 +626,11 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/employee/EDash.jsp");
-		dispatcher.forward(request, response);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/employee/EDash.jsp");
+			dispatcher.forward(request, response);
 		}
 	}
-	
+
 	protected void employeeProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			int branchId=(int) request.getSession().getAttribute("branchId");
@@ -632,54 +641,54 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/employee/Eprofile.jsp");
-		dispatcher.forward(request, response);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/employee/Eprofile.jsp");
+			dispatcher.forward(request, response);
 		}
 	}
-	
+
 	protected void addCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		JSONObject json=new JSONObject();
 		try {
-		UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
-		UtilityHelper.put(json,"Name",request.getParameter("name"));
-		UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
-		UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
-		UtilityHelper.put(json,"UserType","customer");
-		
-		JSONObject json2=new JSONObject();
-		UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
-		UtilityHelper.put(json2,"AadharNumber",Long.parseLong(request.getParameter("aadhar")));
-		UtilityHelper.put(json2,"PanNumber",request.getParameter("pan"));
-		UtilityHelper.put(json2,"Address",request.getParameter("address"));
-		
-		employee.addUsers(json);
-		employee.addCustomers(json2);
-		request.setAttribute("successMessage", "Customer Added ");
+			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json,"Name",request.getParameter("name"));
+			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
+			UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
+			UtilityHelper.put(json,"UserType","customer");
+
+			JSONObject json2=new JSONObject();
+			UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json2,"AadharNumber",Long.parseLong(request.getParameter("aadhar")));
+			UtilityHelper.put(json2,"PanNumber",request.getParameter("pan"));
+			UtilityHelper.put(json2,"Address",request.getParameter("address"));
+
+			employee.addUsers(json);
+			employee.addCustomers(json2);
+			request.setAttribute("successMessage", "Customer Added ");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
 			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);;
-			
+
 		}
 	}
-	
+
 	protected void addAccountGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			if( request.getSession().getAttribute("auth").equals("employee")) {
 				request.setAttribute("branchId",employee.getBranchId((long) request.getAttribute("empId")));
 			}
 			else if (request.getSession().getAttribute("auth").equals("admin")) {
-					request.setAttribute("allBranch",admin.getAllBranchId());
+				request.setAttribute("allBranch",admin.getAllBranchId());
 			}
-			} catch (BankException | InputDefectException e) {
-				request.setAttribute("errorMessage",e.getMessage());
-			}
-			finally {
-				request.getRequestDispatcher("/WEB-INF/employee/addAccount.jsp").forward(request, response);
-			}
+		} catch (BankException | InputDefectException e) {
+			request.setAttribute("errorMessage",e.getMessage());
+		}
+		finally {
+			request.getRequestDispatcher("/WEB-INF/employee/addAccount.jsp").forward(request, response);
+		}
 	}
-	
+
 	protected void addAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		JSONObject json=new JSONObject();
 		try {
@@ -697,7 +706,7 @@ public class ControllServlet extends HttpServlet {
 			addAccountGet(request, response);
 		}
 	}
-	
+
 	protected void accountStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String function=request.getParameter("function");
 		String password=request.getParameter("password");
@@ -756,7 +765,7 @@ public class ControllServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
 		}
 	}
-		
+
 	protected void customerStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String function=request.getParameter("function");
 		String password=request.getParameter("password");
@@ -800,11 +809,11 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 			request.setAttribute("function",function);
 			request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
+		}
 	}
-	}
-	
-	
-	
+
+
+
 	protected void bridge(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		long id =Long.parseLong(request.getParameter("id"));
 		request.getSession().setAttribute("id",id);
@@ -816,8 +825,8 @@ public class ControllServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
 		}
 	}
-	
-//	admin
+
+	//	admin
 	protected void adminDetail(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		long id = (long) request.getSession().getAttribute("id");
@@ -834,7 +843,7 @@ public class ControllServlet extends HttpServlet {
 			login(request, response);
 		}
 	}
-	
+
 	protected void adminDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			int branchId=(int) request.getSession().getAttribute("branchId");
@@ -851,54 +860,54 @@ public class ControllServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/employee/EDash.jsp").forward(request, response);
 		}
 	}
-	
-	
+
+
 	protected void addAuthority(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		try {
-		JSONObject json=new JSONObject();
-		String type=request.getParameter("type");
-		UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
-		UtilityHelper.put(json,"Name",request.getParameter("name"));
-		UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
-		UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
-		UtilityHelper.put(json,"UserType",type);
-		admin.addUsers(json);
-		
-		JSONObject json2= new JSONObject();
-		UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
-		UtilityHelper.put(json2,"BranchId",request.getParameter("branchId") );
-		UtilityHelper.put(json2,"Type",type);
-		admin.addEmployee(json2);
-		request.setAttribute("successMessage", type+" Added Successfully");
+			JSONObject json=new JSONObject();
+			String type=request.getParameter("type");
+			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json,"Name",request.getParameter("name"));
+			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
+			UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
+			UtilityHelper.put(json,"UserType",type);
+			admin.addUsers(json);
+
+			JSONObject json2= new JSONObject();
+			UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json2,"BranchId",request.getParameter("branchId") );
+			UtilityHelper.put(json2,"Type",type);
+			admin.addEmployee(json2);
+			request.setAttribute("successMessage", type+" Added Successfully");
 		}
 		catch (BankException | InputDefectException e) {
 			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-		request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
 		}
 	}
-	
+
 	protected void addBranch(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		try {
-		JSONObject json= new JSONObject();
-		int branchId=Integer.parseInt(request.getParameter("branchId"));
-		UtilityHelper.put(json,"BranchId",branchId);
-		UtilityHelper.put(json,"IfscCode","rey"+String.format("%05d",branchId) );
-		UtilityHelper.put(json,"BranchName",request.getParameter("branchName"));
-		UtilityHelper.put(json,"Address",request.getParameter("address"));
-		admin.createBranch(json);
-		request.setAttribute("successMessage","Branch Added");
+			JSONObject json= new JSONObject();
+			int branchId=Integer.parseInt(request.getParameter("branchId"));
+			UtilityHelper.put(json,"BranchId",branchId);
+			UtilityHelper.put(json,"IfscCode","rey"+String.format("%05d",branchId) );
+			UtilityHelper.put(json,"BranchName",request.getParameter("branchName"));
+			UtilityHelper.put(json,"Address",request.getParameter("address"));
+			admin.createBranch(json);
+			request.setAttribute("successMessage","Branch Added");
 		}
 		catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
-		request.getRequestDispatcher("/WEB-INF/admin/addBranch.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/admin/addBranch.jsp").forward(request, response);
 		}
 	}
-	
+
 	protected void employeeStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String status=(String) request.getParameter("status");
 		String password=request.getParameter("password");
@@ -941,6 +950,6 @@ public class ControllServlet extends HttpServlet {
 		}catch (BankException | InputDefectException e){
 			request.setAttribute("errorMessage", e.getMessage());
 			request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
-	}
+		}
 	}
 }
