@@ -25,7 +25,7 @@
     </div>
 
     <div class="body">  
-        <p>This is a bank over trust which prioritizes customer service at all cost</p>
+        <p>Our bank is over trust which prioritizes customer service at all cost</p>
         <p>24/7 customer support</p>
         <p>100% transparent </p>
     </div>

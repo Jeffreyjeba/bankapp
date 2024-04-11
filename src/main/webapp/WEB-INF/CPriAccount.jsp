@@ -15,7 +15,8 @@
      
      <jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
 
-	<%HttpSession customerSession=request.getSession();%>
+	<%HttpSession customerSession=request.getSession();
+	long primAccount= (long) request.getAttribute("primaryAccount");%>
 
 	<div class="content">
 		<div class="support">
@@ -25,7 +26,7 @@
 					<th>Current Primary Account</th>
 					<tr>
 						<td>Account Number :</td>
-						<td><%=request.getAttribute("primaryAccount") %></td>
+						<td><%=primAccount %></td>
 
 					</tr>
 				</table>
@@ -39,18 +40,20 @@
 						<td>Account Number :</td>
 						<td>
 							<form id="01" action="switchPrimary" method="post">
-								<select name="primAccount">
+								<select name="primAccount" onChange="this.form.submit()">
+								<option><%=primAccount%></option>
 									<%long[] account=(long[])customerSession.getAttribute("accounts");
 				             		 for(long acc:account){
+				             			 if(acc!=primAccount){
 				        				%>
 									<option><%=acc%></option>
-									<%}%>
+									<%}}%>
 								</select>
 							</form>
 						</td>
 					</tr>
 					<tr>
-						<td><button form="01" type="submit">switch</button></td>
+						<!-- <td><button form="01" type="submit">switch</button></td> -->
 					</tr>
 				</table>
 			</div>

@@ -30,6 +30,8 @@
      		priority="no";
      	}
      	
+     	HttpSession customerSession=request.getSession();
+    	long currentAccount= (long)customerSession.getAttribute("currentAccount");
      %>
      
 
@@ -54,11 +56,25 @@
                		 <td>primary Account :</td>
                		 <td><%=priority %></td> 
                		</tr>
-               		
+               		<tr> 
+               		 <td>account :</td>
+               		 <td><form action="switchAccountInfo" method="post" >
+				<select name="account" onChange="this.form.submit()">
+					<option><%=currentAccount%></option>
+	                  	<%long[] account3=(long[])customerSession.getAttribute("accounts");
+				              for(long acc:account3){
+				            	  if(acc!=currentAccount){
+				        	%>
+							<option><%=acc%></option>
+							<%}%>
+	               			<%}%>
+	               		</select>
+		
+				</form></td> 
+               		</tr>
                		<tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                   </table>
                 </div>
-                <jsp:include page="/WEB-INF/common/support.jsp" />
         </div>
 
 

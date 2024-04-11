@@ -53,7 +53,7 @@
                 	     
                     <td>
                     
-                        <select name="branchId">
+                        <select name="branchId" onChange="this.form.submit()">
                         <% 
                         int length=allBranch.length();
                         for(int temp=0;length>temp;temp++){
@@ -62,18 +62,12 @@
                             <option><%=temp2%></option>
                             <%} %> 
                         </select>
-                        
-                    </td>
-                    <td>
-                        <button onclick="submit">switch</button>
                     </td>
                     </form>
                 </tr>
                 <%} %>
 
             </table>
-
-          
 
         </div>
 

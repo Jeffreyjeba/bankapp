@@ -25,14 +25,46 @@
     ZoneId zId= ZoneId.systemDefault();
     DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     int curretPage=(int) request.getAttribute("currentPage");
+    HttpSession customerSession=request.getSession();
+	long currentAccount= (long)customerSession.getAttribute("currentAccount");
     %>
 
 
 	<jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
 
 
-	<div class="history">
-		<table>
+	<div class="history">		
+		<div class="filter">
+		<h4>Type:</h4>
+		<select id="myInput" onchange="myFunction()">
+				     	<option></option>
+				       <option>debit</option>
+				       <option>credit</option>
+				       <option>OBMoneyTransfer</option>
+				        <option>moneyTransfer</option>
+				      </select>
+				
+		<h4>Account:</h4>
+		<form action="historySwitch" method="post" >
+				<select name="account" onchange="this.form.submit()">
+					<option><%=currentAccount%></option>
+	                  	<%long[] account=(long[])customerSession.getAttribute("accounts");
+				              for(long acc:account){
+				            	  if(acc!=currentAccount){
+				        	%>
+							<option><%=acc%></option>
+							<%}%>
+	               			<%}%>
+	               		</select>
+		
+		</form>
+		</div>
+	
+	
+		<table id="myTable">
+		
+		<tr>
+			
 			<tr>
 				<th>TransactionId</th>
 				<th>date</th>
@@ -97,4 +129,26 @@
 		
 		
 </body>
+
+
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[4];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
 </html>

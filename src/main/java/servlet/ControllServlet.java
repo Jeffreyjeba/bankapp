@@ -63,21 +63,27 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("path","switchAccountInfo");
 			accountDetail(request, response);
 			break;
-		case "/switchCredit":
+		case "/historySwitch":
 			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			request.setAttribute("path","switchCredit");
-			request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
+			history(request, response, 1);
 			break;
-		case "/switchDebit":
-			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			request.setAttribute("path","switchDebit");
-			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
-			break;
-		case "/switchMoneyTransfer":
-			request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
-			request.setAttribute("path","switchMoneyTransfer");
-			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
-			break;
+		/*
+		 * case "/switchCredit": request.getSession().setAttribute("currentAccount",
+		 * Long.parseLong(request.getParameter("account")));
+		 * request.setAttribute("path","switchCredit");
+		 * request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request,
+		 * response); break; case "/switchDebit":
+		 * request.getSession().setAttribute("currentAccount",
+		 * Long.parseLong(request.getParameter("account")));
+		 * request.setAttribute("path","switchDebit");
+		 * request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request,
+		 * response); break; case "/switchMoneyTransfer":
+		 * request.getSession().setAttribute("currentAccount",
+		 * Long.parseLong(request.getParameter("account")));
+		 * request.setAttribute("path","switchMoneyTransfer");
+		 * request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request,
+		 * response); break;
+		 */
 		case "/initialDetail":
 			if(request.getSession().getAttribute("auth").equals("employee")){
 				employeeDashboard(request, response);
@@ -361,7 +367,7 @@ public class ControllServlet extends HttpServlet {
 		long accountNumber = Long.parseLong(request.getParameter("account"));
 		HttpSession session = request.getSession();
 		session.setAttribute("currentAccount", accountNumber);
-		request.setAttribute("successMessage", "account switched");
+		request.setAttribute("successMessage", "Account switched");
 		request.getRequestDispatcher("/WEB-INF/accountSwitch.jsp").forward(request, response);
 	}
 
@@ -369,11 +375,11 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			HttpSession session = request.getSession();
-			long accountNumber = (long) session.getAttribute("currentAccount");
 			long id = (long) session.getAttribute("id");
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
 			}
+			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
@@ -387,7 +393,7 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "Amount", amount);
 			UtilityHelper.put(json, "Description", description);
 			customer.credit(json);
-			request.setAttribute("successMessage", "credit successfull");
+			request.setAttribute("successMessage", "Credit successfull");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		} finally {
@@ -399,7 +405,7 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			HttpSession session = request.getSession();
-			long accountNumber = (long) session.getAttribute("currentAccount");
+			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long id = (long) session.getAttribute("id");
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
@@ -416,7 +422,7 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "Amount", amount);
 			UtilityHelper.put(json, "Description", description);
 			customer.debit(json);
-			request.setAttribute("successMessage", "debit successfull");
+			request.setAttribute("successMessage", "Debit successfull");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		} finally {
@@ -428,7 +434,7 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			HttpSession session = request.getSession();
-			long accountNumber = (long) session.getAttribute("currentAccount");
+			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long id = (long) session.getAttribute("id");
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
@@ -436,7 +442,7 @@ public class ControllServlet extends HttpServlet {
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
-			long recevingAccount = Long.parseLong(request.getParameter("account"));
+			long recevingAccount = Long.parseLong(request.getParameter("recAccount"));
 			String ifscCode = (String) request.getParameter("ifsc");
 			boolean access = auth.checkPassword(id, password);
 			if (!access) {
@@ -449,7 +455,7 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "TransactionAccountNumber", recevingAccount);
 			UtilityHelper.put(json, "IfscCode", ifscCode);
 			customer.moneyTransfer(json);
-			request.setAttribute("successMessage", "money transfer successfull");
+			request.setAttribute("successMessage", "Money transfer successfull");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		} finally {
@@ -492,7 +498,7 @@ public class ControllServlet extends HttpServlet {
 				UtilityHelper.put(pass, "Id", id);
 				customer.resetPassword(pass);
 			}
-			request.setAttribute("successMessage", "password Changed successfull");
+			request.setAttribute("successMessage", "Password Changed successfull");
 		} 
 		catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
@@ -519,8 +525,12 @@ public class ControllServlet extends HttpServlet {
 
 	protected void history(HttpServletRequest request, HttpServletResponse response,int page )throws IOException, ServletException {
 		JSONArray jArray=null;
+		long id;
 		try{
-			long accountNumber = (long) request.getSession().getAttribute("currentAccount");
+			HttpSession session = request.getSession();
+			id = (long) session.getAttribute("id");
+			request.setAttribute("accounts",customer.getAccounts(id));
+			long accountNumber = (long) session.getAttribute("currentAccount");
 			int maxPages=customer.getPages(accountNumber,10);
 			if(page<=0) {
 				page=1;
@@ -538,6 +548,7 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
+			
 			request.setAttribute("jArray", jArray);
 			request.setAttribute("currentPage",page);
 			request.getRequestDispatcher("/WEB-INF/CHistory.jsp").forward(request, response);
@@ -678,7 +689,7 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json,"Balance",Long.parseLong(request.getParameter("balance")));
 			UtilityHelper.put(json,"Status","active");	
 			employee.createAccount(json);
-			request.setAttribute("successMessage", "account created successfully");
+			request.setAttribute("successMessage", "Account created successfully");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
@@ -699,7 +710,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long accountNumber= Long.parseLong(request.getParameter("accountNumber"));
 						employee.activateAccount(accountNumber);
-						request.setAttribute("successMessage", "account Activated");
+						request.setAttribute("successMessage", "Account Activated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
@@ -712,7 +723,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long accountNumber= Long.parseLong(request.getParameter("accountNumber"));
 						employee.deactivateAccount(accountNumber);
-						request.setAttribute("successMessage", "account Deactivated");
+						request.setAttribute("successMessage", "Account Deactivated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
@@ -725,7 +736,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long accountNumber= Long.parseLong(request.getParameter("accountNumber"));
 						employee.deleteAccount(accountNumber);
-						request.setAttribute("successMessage", "account deleted");
+						request.setAttribute("successMessage", "Account deleted");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
@@ -758,7 +769,7 @@ public class ControllServlet extends HttpServlet {
 					try {
 						long id= Long.parseLong(request.getParameter("id"));
 						employee.activateCustomer(id);
-						request.setAttribute("successMessage", "customer Activated");
+						request.setAttribute("successMessage", "Customer Activated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}

@@ -10,8 +10,8 @@
 </head>
 <body>
  	<jsp:include page="/WEB-INF/common/commonHeader.jsp" />
+ 	<jsp:include page="/WEB-INF/common/EleftnavBar.jsp" />
  	
- 	<div class="leftNavBar"></div>
 	<div class="content">
         <div class="status">
             <form action="connectCustomer" method="post">

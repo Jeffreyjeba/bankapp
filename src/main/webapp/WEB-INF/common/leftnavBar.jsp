@@ -2,7 +2,9 @@
 
 
 <div class="leftNavBar">
-    <a href="<%=request.getContextPath()%>/page/viewBalance">Balance</a>
+  <%--   <a href="<%=request.getContextPath()%>/page/viewBalance">Balance</a>
+    <br> --%>
+    <a href="<%=request.getContextPath()%>/page/accountInfo">My Account</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/debit">Debit</a>
     <br>
@@ -17,8 +19,6 @@
     <a href="<%=request.getContextPath()%>/page/primaryAccount">Primary Account</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/profile">Profile</a>
-    <br>
-    <a href="<%=request.getContextPath()%>/page/accountInfo">My Account</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
     <br>

@@ -71,6 +71,6 @@ img{
     cursor: pointer;
 }
 
-.login button :hover{
-    opacity:1;
+	button:hover{
+    background-color: rgba(58, 137, 211,0.4);
 }
