@@ -211,6 +211,7 @@ abstract public class DataStorageService implements DataStorage {
 					case "bank.TransactionType":
 					case "bank.UserHirarchy":
 					case "bank.ActiveStatus":
+					case "bank.OperationType":
 						statement.setString(index,valueObject.toString());
 						break;
 					default:

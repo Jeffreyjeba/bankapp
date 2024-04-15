@@ -10,7 +10,29 @@ public class TransactionHistory implements BankMarker{
 	private Long transactionAmount;
 	private Long balance;
 	private String description;
+	private Long createdTime;
+	private Long recentModifiedTime;
+	private long modifiedBy;
 	
+	
+	public Long getCreatedTime() {
+		return createdTime;
+	}
+	public void setCreatedTime(Long createdTime) {
+		this.createdTime = createdTime;
+	}
+	public Long getRecentModifiedTime() {
+		return recentModifiedTime;
+	}
+	public void setRecentModifiedTime(Long recentModifiedTime) {
+		this.recentModifiedTime = recentModifiedTime;
+	}
+	public long getModifiedBy() {
+		return modifiedBy;
+	}
+	public void setModifiedBy(long modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
 	
 	public long getTransactionId() {
 		return transactionId;

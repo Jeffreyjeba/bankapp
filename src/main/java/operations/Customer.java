@@ -4,9 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bank.Authenticator;
+import bank.OperationType;
 import bank.ServiceFactory;
 import bank.TransactionType;
 import database.CustomerServiceInterface;
+import pojo.LogData;
 import pojo.TransactionHistory;
 import utility.BankException;
 import utility.InputDefectException;
@@ -16,7 +18,8 @@ import utility.UtilityHelper;
 public class Customer {
 	
 	private CustomerServiceInterface customer = ServiceFactory.getCustomerService();
-
+	
+	protected Log log =new Log();
 	// operation methods hh
 	
 	public long getBalance(JSONObject customerJson) throws BankException, InputDefectException {
@@ -24,11 +27,6 @@ public class Customer {
 		long accountNumber=UtilityHelper.getLong(customerJson,"AccountNumber");
 		checkAccNoForPresence(accountNumber);
 		return UtilityHelper.getLong(customer.getBalance(accountNumber),"Balance");
-	}
-
-	public void switchAccount(long accountNumber) throws BankException, InputDefectException {
-		checkAccNoForPresence(accountNumber);
-		Authenticator.accountTag(accountNumber);
 	}
 
 	public long[] getAccounts(long id) throws BankException, InputDefectException {
@@ -47,6 +45,8 @@ public class Customer {
 		String password = UtilityHelper.getString(customerJson, "Password");
 		checkIdUserPresence(id);
 		String newPasswordHash = UtilityHelper.passHasher(password);
+		setTime();
+		log.log("-",OperationType.resetPassword);
 		customer.resetPassword(id,newPasswordHash);
 	}
 
@@ -67,7 +67,9 @@ public class Customer {
 		balanceCheck(balanceAmount, amount);
 		long tId = System.currentTimeMillis();
 		TransactionHistory history = historyPojo("debit", -amount, tId, accountNumber, description, balanceAmount - amount,null);
+		setTime(tId);
 		customer.creditDebitOutBank(history);
+		log.log(-amount+"",OperationType.debit);
 	}
 
 	public void credit(JSONObject customerJson) throws BankException, InputDefectException {
@@ -80,7 +82,9 @@ public class Customer {
 		String description = UtilityHelper.getString(customerJson, "Description");
 		long tId = System.currentTimeMillis();
 		TransactionHistory history = historyPojo("credit", amount, tId, accountNumber, description, balanceAmount + amount,null);
+		setTime(tId);
 		customer.creditDebitOutBank(history);
+		log.log(amount+"",OperationType.credit);
 	}
 
 	public void moneyTransfer(JSONObject customerJson) throws BankException, InputDefectException {
@@ -99,7 +103,9 @@ public class Customer {
 			long tId = System.currentTimeMillis();
 			TransactionHistory history = historyPojo("OBMoneyTransfer", -amount, tId, accountNumber, description,
 					balanceAmount - amount, null);
+			setTime(tId);
 			customer.creditDebitOutBank(history);
+			log.log(-amount+"",OperationType.obmoneyTransfer);
 		} 
 		else {
 			checkAccNoForPresence(trasactionAccountNumber);
@@ -150,8 +156,9 @@ public class Customer {
 	}
 	
 	public void logout() {
-		Authenticator.idTag(0);
-		Authenticator.accountTag(0);
+		/*
+		 * Authenticator.idTag(0); Authenticator.accountTag(0);
+		 */
 	}
 	
 	public JSONObject getPrimaryAccount(long id) throws BankException, InputDefectException {
@@ -284,11 +291,13 @@ public class Customer {
 		case "active":
 			long balanceAmount = getBalance(accountNumber);
 			long tBalanceAmount = getBalance(trasactionAccountNumber);
+			setTime(tId);
 			TransactionHistory historySender = historyPojo("moneyTransfer", -amount, tId, accountNumber, description,
 					balanceAmount - amount, trasactionAccountNumber);
 			TransactionHistory historyReceiver = historyPojo("moneyTransfer", amount, tId, trasactionAccountNumber, description,
 					tBalanceAmount + amount, accountNumber);
 			customer.inBank(historySender, historyReceiver);
+			log.log(-amount+"",OperationType.obmoneyTransfer);
 			break;
 		case "inactive":
 			throw new BankException("your reciptant account is blocked");
@@ -296,6 +305,27 @@ public class Customer {
 			throw new BankException("your reciptant account is deleted");
 		}
 	}
+	
+	
+	
+	//util
+	
+	protected void log(){
+		Authenticator.user.get().setTime(System.currentTimeMillis());
+		
+		
+		
+		
+	}
+	
+	protected void setTime() {
+		Authenticator.user.get().setTime(System.currentTimeMillis());
+	}
+	
+	protected void setTime(long time) {
+		Authenticator.user.get().setTime(time);
+	}
+
 
 	// check methods
 

@@ -2,6 +2,7 @@ package bank;
 
 import org.json.JSONObject;
 import database.AuthendicatorServiceInterface;
+import pojo.UserData;
 import utility.BankException;
 import utility.InputDefectException;
 import utility.UtilityHelper;
@@ -61,18 +62,24 @@ public class Authenticator {
 	}
 
 	
+	public static ThreadLocal<UserData> user = new ThreadLocal<UserData>();
 	
-	  public static ThreadLocal<Long> id = new ThreadLocal<Long>(); public static
-	  ThreadLocal<Long> accountNumber = new ThreadLocal<Long>();
-	 
-	 
+	/*
+	 * public static void userTag(UserData user ) { id.set(user); }
+	 * 
+	 * public static UserData userGet(UserData user ) { return id.get(); }
+	 */
 	
-	  public static void idTag(long userId) {
-		  id.set(userId);
-	  }
-	  
-	  public static void accountTag(long accountNum) {
-	  System.out.println(Thread.currentThread().getName());
-	  accountNumber.set(accountNum);
-	  }
+	
+	/*
+	 * public static ThreadLocal<Long> id = new ThreadLocal<Long>(); public static
+	 * ThreadLocal<Long> accountNumber = new ThreadLocal<Long>();
+	 * 
+	 * 
+	 * 
+	 * public static void idTag(long userId) { id.set(userId); }
+	 * 
+	 * public static void accountTag(long accountNum) {
+	 * accountNumber.set(accountNum); }
+	 */
 }

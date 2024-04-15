@@ -1,15 +1,17 @@
 package operations;
 
 
-import java.lang.annotation.Retention;
-
 import org.json.JSONObject;
 
+import bank.Authenticator;
+import bank.OperationType;
 import bank.ServiceFactory;
 import bank.UserHirarchy;
 import database.EmployeeServiceInterface;
 import pojo.Accounts;
+import pojo.BankMarker;
 import pojo.Customers;
+import pojo.UserData;
 import pojo.Users;
 import utility.BankException;
 import utility.InputDefectException;
@@ -25,7 +27,10 @@ public class Employee extends Customer{
 		Users user=josnToUsers(userJson);
 		checkIdUserAbsence(user.getId());
 		validateUsers(userJson);
+		setTime();
+		setCreationDetails(user);
 		employee.addUsers(user);
+		log.log("-",OperationType.addUser);
 	}
 	public void addCustomers(JSONObject customerJson) throws BankException,InputDefectException{
 		UtilityHelper.nullCheck(customerJson);
@@ -34,26 +39,36 @@ public class Employee extends Customer{
 		checkIdUserPresence(id);
 		checkIdCustomerAbsence(id);
 		validateCustomer(customerJson);
+		setTime();
 		employee.addCustomers(customer);
+		log.log("-",OperationType.addCustomer);
 	}
 	public void createAccount(JSONObject accountJson) throws BankException,InputDefectException {
 		UtilityHelper.nullCheck(accountJson);
 		Accounts account=jsonToAccounts(accountJson);
 		checkAccNoForAbsence(account.getAccountNumber());
 		checkIdCustomerPresence(account.getId());
+		setTime();
 		employee.createAccount(account);
+		log.log("-",OperationType.addAccount);
 	}
 	public void deleteAccount(long accountNumber) throws BankException,InputDefectException {
 		checkAccNoForPresence(accountNumber);
+		setTime();
 		employee.deleteAccount(accountNumber);
+		log.log("-",OperationType.deleteAccount);
 	}
 	public void deactivateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
+		setTime();
 		employee.deactivateAccount(accountNumber);
+		log.log("-",OperationType.deactivateAccount);
 	}
 	public void activateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
+		setTime();
 		employee.activateAccount(accountNumber);
+		log.log("-",OperationType.activateAccount);
 	}
 	
 	public JSONObject getBranchId(long id) throws BankException {
@@ -62,12 +77,16 @@ public class Employee extends Customer{
 	
 	public void activateCustomer(long id) throws BankException, InputDefectException {
 		checkIdCustomerPresence(id);
+		setTime();
 		employee.activateCustomer(id);
+		log.log("-",OperationType.activateCustomer);
 	}
 	
 	public void deactivateCustomer(long id) throws BankException, InputDefectException {
 		checkIdCustomerPresence(id);
+		setTime();
 		employee.deactivateCustomer(id);
+		log.log("-",OperationType.deactivateCustomer);
 	}
 	
 	
@@ -131,5 +150,11 @@ public class Employee extends Customer{
 		 }
 	}
 	
-
+	
+	protected void setCreationDetails(BankMarker bank) {
+		UserData userData=Authenticator.user.get();
+		bank.setCreatedTime(userData.getTime());
+		bank.setRecentModifiedTime(userData.getTime());
+		bank.setModifiedBy(userData.getId());
+	}
 }

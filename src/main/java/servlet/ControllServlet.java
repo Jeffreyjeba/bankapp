@@ -16,6 +16,7 @@ import bank.Authenticator;
 import operations.Admin;
 import operations.Customer;
 import operations.Employee;
+import pojo.UserData;
 import utility.BankException;
 import utility.InputDefectException;
 import utility.UtilityHelper;
@@ -26,6 +27,9 @@ public class ControllServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		try {
 			String path = request.getPathInfo();
+			if(!path.equals("/LoginAuthendicate")) {
+				setLocal(request);
+			}
 			switch (path) {
 			case "/LoginAuthendicate":
 				loginAuthendicate(request, response);
@@ -68,23 +72,6 @@ public class ControllServlet extends HttpServlet {
 				request.getSession().setAttribute("currentAccount",  Long.parseLong(request.getParameter("account")));
 				history(request, response, 1);
 				break;
-				/*
-				 * case "/switchCredit": request.getSession().setAttribute("currentAccount",
-				 * Long.parseLong(request.getParameter("account")));
-				 * request.setAttribute("path","switchCredit");
-				 * request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request,
-				 * response); break; case "/switchDebit":
-				 * request.getSession().setAttribute("currentAccount",
-				 * Long.parseLong(request.getParameter("account")));
-				 * request.setAttribute("path","switchDebit");
-				 * request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request,
-				 * response); break; case "/switchMoneyTransfer":
-				 * request.getSession().setAttribute("currentAccount",
-				 * Long.parseLong(request.getParameter("account")));
-				 * request.setAttribute("path","switchMoneyTransfer");
-				 * request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request,
-				 * response); break;
-				 */
 			case "/initialDetail":
 				if(request.getSession().getAttribute("auth").equals("employee")){
 					employeeDashboard(request, response);
@@ -132,16 +119,15 @@ public class ControllServlet extends HttpServlet {
 			}
 		}
 		finally {
-
+			Authenticator.user.remove();
 		}
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		try {
 			String path = request.getPathInfo();
 			switch (path) {
 			case "/logout":
-				logout(request, response);
+				logout(request, response);  //to be added
 				break;
 			case "/login":
 				login(request, response);
@@ -237,10 +223,6 @@ public class ControllServlet extends HttpServlet {
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + path);
 			}
-		}
-		finally {
-
-		}
 	}
 
 	protected void login(HttpServletRequest request, HttpServletResponse response)
@@ -951,5 +933,23 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 			request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
 		}
+	}
+	
+	
+	private void setLocal(HttpServletRequest request) {
+		HttpSession session= request.getSession();
+		String auth = (String)session.getAttribute("auth");
+		long currentId= (long) session.getAttribute("id");
+		UserData data=new UserData();
+		long id;
+		if(auth.equals("customer")) {
+			id=currentId;
+		}
+		else {
+			id=(long) session.getAttribute("empId");
+		}
+		data.setActiveId(currentId);
+		data.setId(id);
+		Authenticator.user.set(data);
 	}
 }

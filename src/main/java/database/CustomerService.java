@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import bank.Priority;
 import pojo.BankMarker;
+import pojo.LogData;
 import pojo.TransactionHistory;
 import utility.BankException;
 import utility.InputDefectException;
@@ -246,6 +247,12 @@ public class CustomerService extends DataStorageService implements CustomerServi
 	public JSONObject getAccountDetails(long accountNumber) throws BankException, InputDefectException {
 		 StringBuilder accountQuery=builder.selectAllFromWherePrep("accounts","AccountNumber="+accountNumber);
 		return select(accountQuery);
+	}
+	
+	synchronized
+	public void logActivity(LogData logData) throws BankException, InputDefectException {
+		StringBuilder logQuery= builder.pojoToAddQuery("auditlog",logData);
+		add(logQuery, logData);
 	}
 
 }

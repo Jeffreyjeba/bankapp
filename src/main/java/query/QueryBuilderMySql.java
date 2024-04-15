@@ -1,13 +1,7 @@
 package query;
 
-import java.io.FileDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import pojo.BankMarker;
 import utility.BankException;
 

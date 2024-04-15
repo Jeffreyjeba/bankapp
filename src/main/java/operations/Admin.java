@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bank.EmployeeType;
+import bank.OperationType;
 import bank.ServiceFactory;
 import database.AdminServiceInterface;
 import pojo.Branch;
@@ -21,7 +22,9 @@ public class Admin extends Employee {
 		Branch branch=jsonToBranch(branchJson);
 		long branchId = branch.getBranchId();
 		checkBranchIdAbsence(branchId);
+		setTime();
 		admin.createBranch(branch);
+		log.log("-",OperationType.createBranch);
 	}
 
 	public void addAdmin(JSONObject admin) throws BankException, InputDefectException {
@@ -34,24 +37,32 @@ public class Admin extends Employee {
 		checkIdUserPresence(employee.getId());
 		checkForWorkersAbsence(employee.getId());
 		checkBranchIdPresence(employee.getBranchId());
+		setTime();
 		admin.addEmployee(employee);
+		log.log("-",OperationType.addEmployee);
 	}
 
 	public void removeEmployee(JSONObject employee) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(employee);
 		long id = UtilityHelper.getLong(employee, "Id");
 		checkForWorkersPresence(id);
+		setTime();
 		admin.removeEmployee(id);
+		log.log("-",OperationType.removeEmployee);
 	}
 	
 	public void activateEmployee(long id) throws BankException, InputDefectException {
 		checkForWorkersPresence(id);
+		setTime();
 		admin.activateCustomer(id);
+		log.log("-",OperationType.activateEmployee);
 	}
 	
 	public void inactivateEmployee(long id) throws BankException, InputDefectException {
 		checkForWorkersPresence(id);
+		setTime();
 		admin.deactivateCustomer(id);
+		log.log("-",OperationType.deactivateEmployee);
 	}
 
 	public JSONArray getAllBranchId() throws BankException, InputDefectException {
