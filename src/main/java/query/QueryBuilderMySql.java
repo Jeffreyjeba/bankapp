@@ -2,7 +2,10 @@ package query;
 
 import java.lang.reflect.Field;
 import org.json.JSONObject;
+
+import bank.Authenticator;
 import pojo.BankMarker;
+import pojo.UserData;
 import utility.BankException;
 
 public class QueryBuilderMySql implements Query {
@@ -132,6 +135,14 @@ public class QueryBuilderMySql implements Query {
 		stringBuilder.append(target);
 		stringBuilder.append(" = ");
 		stringBuilder.append(value);
+		stringBuilder.append(",");
+		stringBuilder.append("RecentModifiedTime");
+		stringBuilder.append(" = ");
+		UserData userData= Authenticator.user.get();
+		stringBuilder.append(userData.getTime());
+		stringBuilder.append(", ModifiedBy");
+		stringBuilder.append(" = ");
+		stringBuilder.append(userData.getId());
 	}
 	
 	private void charSet(StringBuilder stringBuilder, String target, String value) {
@@ -140,7 +151,14 @@ public class QueryBuilderMySql implements Query {
 		stringBuilder.append(" = ");
 		stringBuilder.append("'");
 		stringBuilder.append(value);
-		stringBuilder.append("'");
+		stringBuilder.append("',");
+		stringBuilder.append("RecentModifiedTime");
+		stringBuilder.append(" = ");
+		UserData userData= Authenticator.user.get();
+		stringBuilder.append(userData.getTime());
+		stringBuilder.append(", ModifiedBy");
+		stringBuilder.append(" = ");
+		stringBuilder.append(userData.getId());
 	}
 
 	private void where(StringBuilder stringBuilder, String input, String condition) {

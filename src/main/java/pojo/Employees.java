@@ -2,7 +2,7 @@ package pojo;
 
 import bank.EmployeeType;
 
-public class Employees implements BankMarker {
+public class Employees implements BankMarker,LogMethods {
 	private Long id ;
 	private Integer branchId;
 	private EmployeeType type;

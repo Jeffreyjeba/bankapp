@@ -25,7 +25,6 @@
                      <tr><td><button type="submit">create</button></td></tr>
                       <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>
-                    <jsp:include page="/WEB-INF/common/error.jsp"  />
             </form>
         </div>
     </div>

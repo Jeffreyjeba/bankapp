@@ -2,7 +2,6 @@ package operations;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import bank.Authenticator;
 import bank.OperationType;
 import database.CustomerService;
@@ -13,7 +12,7 @@ import utility.InputDefectException;
 
 public class Log  {
 	
-	ExecutorService executor= Executors.newFixedThreadPool(7);
+	private ExecutorService executor= Executors.newFixedThreadPool(7);
 	
 	public void log(String description,OperationType opType) throws BankException, InputDefectException {
 	 	 UserData userData= Authenticator.user.get();
@@ -26,7 +25,6 @@ public class Log  {
 	 	 Runnable runnable= logTask(logData);
 	 	 executor.submit(runnable);
 	}
-	
 
 	private Runnable logTask(LogData logData) {
 		return ()-> {
@@ -35,9 +33,7 @@ public class Log  {
 					CustomerService.getCustomerService().logActivity(logData);
 				} catch (BankException | InputDefectException e) {
 					e.printStackTrace();
-				}
-			
-			
+				}	
 		};
 	}
 }

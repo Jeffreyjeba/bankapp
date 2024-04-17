@@ -240,7 +240,7 @@ public class ControllServlet extends HttpServlet {
 		try {
 			long id = Integer.parseInt(request.getParameter("id"));
 			String password = request.getParameter("password");
-			boolean access = auth.checkPassword(id, password);
+			boolean access = auth.login(id, password);
 			if (access) {
 				request.getSession().setAttribute("id", id);
 				auth.validateUser(id);
@@ -276,10 +276,16 @@ public class ControllServlet extends HttpServlet {
 
 	protected void logout(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
 		HttpSession session = request.getSession();
+		auth.logout((long) request.getSession().getAttribute("id"));
 		session.invalidate();
-		customer.logout();
 		login(request, response);
+		}
+		catch (InputDefectException | BankException e) {
+			request.setAttribute("errorMessage", e.getMessage());
+			login(request, response);
+		}
 	}
 
 	protected void customerDetail(HttpServletRequest request, HttpServletResponse response)
@@ -414,6 +420,7 @@ public class ControllServlet extends HttpServlet {
 			customer.debit(json);
 			request.setAttribute("successMessage", "Debit successfull");
 		} catch (BankException | InputDefectException e) {
+			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
 		} finally {
 			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);

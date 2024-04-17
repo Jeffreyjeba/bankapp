@@ -46,6 +46,7 @@ public class Customer {
 		checkIdUserPresence(id);
 		String newPasswordHash = UtilityHelper.passHasher(password);
 		setTime();
+		Authenticator.user.get().setActiveId(id);
 		log.log("-",OperationType.resetPassword);
 		customer.resetPassword(id,newPasswordHash);
 	}
@@ -175,6 +176,8 @@ public class Customer {
 	public void setPrimaryAccount(long accountNumber) throws BankException, InputDefectException {
 		checkAccNoForPresence(accountNumber);
 		customer.setPrimaryAccount(accountNumber);
+		setTime();
+		log.log("PrimaryAccount :"+accountNumber,OperationType.switchPrimary);
 	}
 	
 	public void switchPrimaryAccount(long accountNumber,long id) throws BankException, InputDefectException {
@@ -241,6 +244,8 @@ public class Customer {
 		if(TransactionAccountNumber!=null) {
 		history.setTransactionAccountNumber(TransactionAccountNumber);
 		}
+		history.setModifiedBy(Authenticator.user.get().getId());
+		history.setCreatedTime(System.currentTimeMillis());
 		return history;	
 	}
 
@@ -310,13 +315,6 @@ public class Customer {
 	
 	//util
 	
-	protected void log(){
-		Authenticator.user.get().setTime(System.currentTimeMillis());
-		
-		
-		
-		
-	}
 	
 	protected void setTime() {
 		Authenticator.user.get().setTime(System.currentTimeMillis());

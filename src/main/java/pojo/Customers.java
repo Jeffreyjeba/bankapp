@@ -1,6 +1,6 @@
 package pojo;
 
-public class Customers implements BankMarker {
+public class Customers implements BankMarker,LogMethods {
 	private Long customerId;
 	private Long id;
 	private Long aadharNumber;

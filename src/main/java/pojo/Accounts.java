@@ -3,7 +3,7 @@ package pojo;
 import bank.AccountStatus;
 import bank.Priority;
 
-public class Accounts implements BankMarker {
+public class Accounts implements BankMarker,LogMethods {
 	private Long accountNumber;
 	private Long id;
 	private Integer branchId;

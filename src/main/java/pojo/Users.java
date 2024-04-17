@@ -3,7 +3,7 @@ package pojo;
 import bank.ActiveStatus;
 import bank.UserHirarchy;
 
-public class Users implements BankMarker{
+public class Users implements BankMarker,LogMethods{
 	private Long id;
 	private String name;
 	private String emailId;

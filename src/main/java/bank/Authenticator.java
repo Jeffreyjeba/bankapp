@@ -1,7 +1,9 @@
 package bank;
 
 import org.json.JSONObject;
+
 import database.AuthendicatorServiceInterface;
+import operations.Log;
 import pojo.UserData;
 import utility.BankException;
 import utility.InputDefectException;
@@ -11,6 +13,7 @@ public class Authenticator {
 	
 	AuthendicatorServiceInterface auth=ServiceFactory.getAuthendicatorService();
 
+	Log log=new Log();
 	public String getAuthority(long id) throws BankException, InputDefectException   { 
 		return auth.getAuthority(id);
 	}
@@ -21,6 +24,31 @@ public class Authenticator {
 			throw new BankException("user blocked contact bank");
 		}
 	}
+	
+	public boolean login(long userId, String password) throws InputDefectException, BankException {
+		boolean access= checkPassword(userId, password);
+		if(access==true) {
+			UserData userData=new UserData();
+			userData.setActiveId(userId);
+			userData.setId(userId);
+			Authenticator.user.set(userData);
+			setTime();
+			log.log("-",OperationType.login);
+		}
+		return access;
+	}
+	
+	
+	public void logout(long userId) throws InputDefectException, BankException {
+			UserData userData=new UserData();
+			userData.setActiveId(userId);
+			userData.setId(userId);
+			Authenticator.user.set(userData);
+			setTime();
+			log.log("-",OperationType.logout);
+		
+	}
+	
 
 	public boolean checkPassword(long userId, String password) throws InputDefectException {
 		password = UtilityHelper.passHasher(password);
@@ -59,6 +87,15 @@ public class Authenticator {
 			throw new BankException("wrong combination");
 		}
 		return UtilityHelper.getString(json,"Password");
+	}
+	
+	
+	protected void setTime() {
+		Authenticator.user.get().setTime(System.currentTimeMillis());
+	}
+	
+	protected void setTime(long time) {
+		Authenticator.user.get().setTime(time);
 	}
 
 	

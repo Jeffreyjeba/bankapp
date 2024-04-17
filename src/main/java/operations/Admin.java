@@ -23,6 +23,7 @@ public class Admin extends Employee {
 		long branchId = branch.getBranchId();
 		checkBranchIdAbsence(branchId);
 		setTime();
+		setCreationDetails(branch);
 		admin.createBranch(branch);
 		log.log("-",OperationType.createBranch);
 	}
@@ -38,6 +39,7 @@ public class Admin extends Employee {
 		checkForWorkersAbsence(employee.getId());
 		checkBranchIdPresence(employee.getBranchId());
 		setTime();
+		setCreationDetails(employee);
 		admin.addEmployee(employee);
 		log.log("-",OperationType.addEmployee);
 	}

@@ -10,29 +10,7 @@ public class LogData implements BankMarker{
 	private OperationType operationType;
 	private String description;
 	private long time;
-	private Long createdTime;
-	private Long recentModifiedTime;
-	private long modifiedBy;
-	
-	
-	public Long getCreatedTime() {
-		return createdTime;
-	}
-	public void setCreatedTime(Long createdTime) {
-		this.createdTime = createdTime;
-	}
-	public Long getRecentModifiedTime() {
-		return recentModifiedTime;
-	}
-	public void setRecentModifiedTime(Long recentModifiedTime) {
-		this.recentModifiedTime = recentModifiedTime;
-	}
-	public long getModifiedBy() {
-		return modifiedBy;
-	}
-	public void setModifiedBy(long modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+
 	
 	
 	public long getLogId() {

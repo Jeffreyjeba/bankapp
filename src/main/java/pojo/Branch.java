@@ -1,6 +1,6 @@
 package pojo;
 
-public class Branch implements BankMarker {
+public class Branch implements BankMarker,LogMethods {
 	private Integer branchId;
 	private String ifscCode;
 	private String branchName;

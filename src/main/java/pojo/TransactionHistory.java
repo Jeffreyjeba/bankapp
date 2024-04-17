@@ -2,7 +2,7 @@ package pojo;
 
 import bank.TransactionType;
 
-public class TransactionHistory implements BankMarker{
+public class TransactionHistory implements BankMarker ,LogMethods{
 	private Long transactionId;
 	private Long accountNumber;
 	private Long transactionAccountNumber;
@@ -11,7 +11,6 @@ public class TransactionHistory implements BankMarker{
 	private Long balance;
 	private String description;
 	private Long createdTime;
-	private Long recentModifiedTime;
 	private long modifiedBy;
 	
 	
@@ -22,10 +21,10 @@ public class TransactionHistory implements BankMarker{
 		this.createdTime = createdTime;
 	}
 	public Long getRecentModifiedTime() {
-		return recentModifiedTime;
+		return null;
 	}
 	public void setRecentModifiedTime(Long recentModifiedTime) {
-		this.recentModifiedTime = recentModifiedTime;
+		
 	}
 	public long getModifiedBy() {
 		return modifiedBy;

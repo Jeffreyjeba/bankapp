@@ -3,9 +3,11 @@ package database;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import pojo.LogData;
 import pojo.TransactionHistory;
 import utility.BankException;
 import utility.InputDefectException;
+import utility.UtilityHelper;
 
 
 public interface CustomerServiceInterface {
@@ -55,4 +57,8 @@ public interface CustomerServiceInterface {
 	public int pageCount(long accountNumber,int quantity) throws BankException, InputDefectException ;
 	
 	public JSONObject getAccountDetails(long accountNumber) throws BankException, InputDefectException ;
+	
+	public long userForAccountNumber(long accountNumber) throws BankException, InputDefectException ;
+	
+	public void logActivity(LogData logData) throws BankException, InputDefectException ;
 }
