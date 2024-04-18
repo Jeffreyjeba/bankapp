@@ -3,7 +3,7 @@ package bank;
 import org.json.JSONObject;
 
 import database.AuthendicatorServiceInterface;
-import operations.Log;
+import operations.LogAgent;
 import pojo.UserData;
 import utility.BankException;
 import utility.InputDefectException;
@@ -13,7 +13,6 @@ public class Authenticator {
 	
 	AuthendicatorServiceInterface auth=ServiceFactory.getAuthendicatorService();
 
-	Log log=new Log();
 	public String getAuthority(long id) throws BankException, InputDefectException   { 
 		return auth.getAuthority(id);
 	}
@@ -33,7 +32,7 @@ public class Authenticator {
 			userData.setId(userId);
 			Authenticator.user.set(userData);
 			setTime();
-			log.log("-",OperationType.login);
+			LogAgent.log("-",OperationType.login);
 		}
 		return access;
 	}
@@ -45,7 +44,7 @@ public class Authenticator {
 			userData.setId(userId);
 			Authenticator.user.set(userData);
 			setTime();
-			log.log("-",OperationType.logout);
+			LogAgent.log("-",OperationType.logout);
 		
 	}
 	

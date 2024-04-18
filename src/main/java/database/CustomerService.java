@@ -256,7 +256,7 @@ public class CustomerService extends DataStorageService implements CustomerServi
 		return UtilityHelper.getLong(select(query),"Id");
 	}
 	
-	synchronized
+	
 	public void logActivity(LogData logData) throws BankException, InputDefectException {
 		StringBuilder logQuery= builder.pojoToAddQuery("auditlog",logData);
 		add(logQuery, logData);

@@ -31,7 +31,7 @@ public class Employee extends Customer{
 		Authenticator.user.get().setActiveId(UtilityHelper.getLong(userJson,"Id"));
 		setCreationDetails(user);
 		employee.addUsers(user);
-		log.log("-",OperationType.addUser);
+		LogAgent.log("-",OperationType.addUser);
 	}
 	public void addCustomers(JSONObject customerJson) throws BankException,InputDefectException{
 		UtilityHelper.nullCheck(customerJson);
@@ -44,7 +44,7 @@ public class Employee extends Customer{
 		Authenticator.user.get().setActiveId(UtilityHelper.getLong(customerJson,"Id"));
 		setCreationDetails(customer);
 		employee.addCustomers(customer);
-		log.log("-",OperationType.addCustomer);
+		LogAgent.log("-",OperationType.addCustomer);
 	}
 	public void createAccount(JSONObject accountJson) throws BankException,InputDefectException {
 		UtilityHelper.nullCheck(accountJson);
@@ -55,28 +55,28 @@ public class Employee extends Customer{
 		Authenticator.user.get().setActiveId(UtilityHelper.getLong(accountJson,"Id"));
 		setCreationDetails(account);
 		employee.createAccount(account);
-		log.log("-",OperationType.addAccount);
+		LogAgent.log("-",OperationType.addAccount);
 	}
 	public void deleteAccount(long accountNumber) throws BankException,InputDefectException {
 		checkAccNoForPresence(accountNumber);
 		setTime();
 		setUserForAccounts(accountNumber);
 		employee.deleteAccount(accountNumber);
-		log.log("Account number : "+accountNumber,OperationType.deleteAccount);
+		LogAgent.log("Account number : "+accountNumber,OperationType.deleteAccount);
 	}
 	public void deactivateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
 		setTime();
 		setUserForAccounts(accountNumber);
 		employee.deactivateAccount(accountNumber);
-		log.log("Account number : "+accountNumber,OperationType.deactivateAccount);
+		LogAgent.log("Account number : "+accountNumber,OperationType.deactivateAccount);
 	}
 	public void activateAccount(long accountNumber) throws BankException,InputDefectException  {
 		checkAccNoForPresence(accountNumber);
 		setTime();
 		setUserForAccounts(accountNumber);
 		employee.activateAccount(accountNumber);
-		log.log("Account number : "+accountNumber,OperationType.activateAccount);
+		LogAgent.log("Account number : "+accountNumber,OperationType.activateAccount);
 	}
 	
 	public JSONObject getBranchId(long id) throws BankException {
@@ -88,7 +88,7 @@ public class Employee extends Customer{
 		setTime();
 		Authenticator.user.get().setActiveId(id);
 		employee.activateCustomer(id);
-		log.log("-",OperationType.activateCustomer);
+		LogAgent.log("-",OperationType.activateCustomer);
 	}
 	
 	public void deactivateCustomer(long id) throws BankException, InputDefectException {
@@ -96,7 +96,7 @@ public class Employee extends Customer{
 		setTime();
 		Authenticator.user.get().setActiveId(id);
 		employee.deactivateCustomer(id);
-		log.log("-",OperationType.deactivateCustomer);
+		LogAgent.log("-",OperationType.deactivateCustomer);
 	}
 	
 	

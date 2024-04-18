@@ -25,7 +25,7 @@ public class Admin extends Employee {
 		setTime();
 		setCreationDetails(branch);
 		admin.createBranch(branch);
-		log.log("-",OperationType.createBranch);
+		LogAgent.log("-",OperationType.createBranch);
 	}
 
 	public void addAdmin(JSONObject admin) throws BankException, InputDefectException {
@@ -41,7 +41,7 @@ public class Admin extends Employee {
 		setTime();
 		setCreationDetails(employee);
 		admin.addEmployee(employee);
-		log.log("-",OperationType.addEmployee);
+		LogAgent.log("-",OperationType.addEmployee);
 	}
 
 	public void removeEmployee(JSONObject employee) throws BankException, InputDefectException {
@@ -50,21 +50,21 @@ public class Admin extends Employee {
 		checkForWorkersPresence(id);
 		setTime();
 		admin.removeEmployee(id);
-		log.log("-",OperationType.removeEmployee);
+		LogAgent.log("-",OperationType.removeEmployee);
 	}
 	
 	public void activateEmployee(long id) throws BankException, InputDefectException {
 		checkForWorkersPresence(id);
 		setTime();
 		admin.activateCustomer(id);
-		log.log("-",OperationType.activateEmployee);
+		LogAgent.log("-",OperationType.activateEmployee);
 	}
 	
 	public void inactivateEmployee(long id) throws BankException, InputDefectException {
 		checkForWorkersPresence(id);
 		setTime();
 		admin.deactivateCustomer(id);
-		log.log("-",OperationType.deactivateEmployee);
+		LogAgent.log("-",OperationType.deactivateEmployee);
 	}
 
 	public JSONArray getAllBranchId() throws BankException, InputDefectException {

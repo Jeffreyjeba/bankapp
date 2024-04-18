@@ -1,17 +1,18 @@
 package lock;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 public class LockSupplier {
 
-	private  Map<Integer ,Userlock> lockCache = new ConcurrentHashMap<Integer, Userlock>();
+	private static Map<Long ,Userlock> lockCache =Collections.synchronizedMap(new WeakHashMap<Long, Userlock>());
 	
-	public Userlock getLock(int id) {
-		Userlock lock=lockCache.get(id);
+	public static Userlock getLock(long accountNumber) {
+		Userlock lock=lockCache.get(accountNumber);
 		if(lock== null) {
 			Userlock newLock=createNewLock();
-			lockCache.put(id, newLock);
+			lockCache.put(accountNumber, newLock);
 			return newLock;
 		}
 		else {
@@ -19,7 +20,7 @@ public class LockSupplier {
 		}
 	}
 	
-	private Userlock createNewLock() {
+	private static Userlock createNewLock() {
 		return new Userlock();
 	}	
 }

@@ -8,7 +8,7 @@ import bank.OperationType;
 import bank.ServiceFactory;
 import bank.TransactionType;
 import database.CustomerServiceInterface;
-import pojo.LogData;
+import lock.LockSupplier;
 import pojo.TransactionHistory;
 import utility.BankException;
 import utility.InputDefectException;
@@ -19,8 +19,6 @@ public class Customer {
 	
 	private CustomerServiceInterface customer = ServiceFactory.getCustomerService();
 	
-	protected Log log =new Log();
-	// operation methods hh
 	
 	public long getBalance(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
@@ -47,7 +45,7 @@ public class Customer {
 		String newPasswordHash = UtilityHelper.passHasher(password);
 		setTime();
 		Authenticator.user.get().setActiveId(id);
-		log.log("-",OperationType.resetPassword);
+		LogAgent.log("-",OperationType.resetPassword);
 		customer.resetPassword(id,newPasswordHash);
 	}
 
@@ -57,20 +55,23 @@ public class Customer {
 		return UtilityHelper.getString(resultJson, "Status");
 	}
 
+	
 	public void debit(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
-		long balanceAmount = getBalance(customerJson);
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
 		String description = UtilityHelper.getString(customerJson, "Description");
-		balanceCheck(balanceAmount, amount);
 		long tId = System.currentTimeMillis();
-		TransactionHistory history = historyPojo("debit", -amount, tId, accountNumber, description, balanceAmount - amount,null);
-		setTime(tId);
-		customer.creditDebitOutBank(history);
-		log.log(-amount+"",OperationType.debit);
+		synchronized (LockSupplier.getLock(accountNumber)) {
+			long balanceAmount = getBalance(customerJson);
+			balanceCheck(balanceAmount, amount);
+			TransactionHistory history = historyPojo("debit", -amount, tId, accountNumber, description, balanceAmount - amount,null);
+			setTime(tId);
+			customer.creditDebitOutBank(history);
+		}
+		LogAgent.log(-amount+"",OperationType.debit);
 	}
 
 	public void credit(JSONObject customerJson) throws BankException, InputDefectException {
@@ -78,14 +79,16 @@ public class Customer {
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
-		long balanceAmount = getBalance(customerJson);
+		long tId = System.currentTimeMillis();
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
 		String description = UtilityHelper.getString(customerJson, "Description");
-		long tId = System.currentTimeMillis();
-		TransactionHistory history = historyPojo("credit", amount, tId, accountNumber, description, balanceAmount + amount,null);
-		setTime(tId);
-		customer.creditDebitOutBank(history);
-		log.log(amount+"",OperationType.credit);
+		synchronized (LockSupplier.getLock(accountNumber)) {
+			long balanceAmount = getBalance(customerJson);
+			TransactionHistory history = historyPojo("credit", amount, tId, accountNumber, description, balanceAmount + amount,null);
+			setTime(tId);
+			customer.creditDebitOutBank(history);
+		}
+		LogAgent.log(amount+"",OperationType.credit);
 	}
 
 	public void moneyTransfer(JSONObject customerJson) throws BankException, InputDefectException {
@@ -93,24 +96,26 @@ public class Customer {
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
-		long balanceAmount = getBalance(customerJson);
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
-		balanceCheck(balanceAmount, amount);
 		long trasactionAccountNumber = UtilityHelper.getLong(customerJson, "TransactionAccountNumber");
 		String description = UtilityHelper.getString(customerJson, "Description");
 		String ifscCode = UtilityHelper.getString(customerJson, "IfscCode");
 		boolean inBank = resolveTransaction(accountNumber, trasactionAccountNumber, ifscCode);
-		if (!inBank) {
-			long tId = System.currentTimeMillis();
-			TransactionHistory history = historyPojo("OBMoneyTransfer", -amount, tId, accountNumber, description,
-					balanceAmount - amount, null);
-			setTime(tId);
-			customer.creditDebitOutBank(history);
-			log.log(-amount+"",OperationType.obmoneyTransfer);
-		} 
-		else {
-			checkAccNoForPresence(trasactionAccountNumber);
-			inBankTransfer(accountNumber, trasactionAccountNumber, amount, description);
+		synchronized (LockSupplier.getLock(accountNumber)) {
+			long balanceAmount = getBalance(customerJson);
+			balanceCheck(balanceAmount, amount);
+			if (!inBank) {
+				long tId = System.currentTimeMillis();
+				TransactionHistory history = historyPojo("OBMoneyTransfer", -amount, tId, accountNumber, description,
+						balanceAmount - amount, null);
+				setTime(tId);
+				customer.creditDebitOutBank(history);
+				LogAgent.log(-amount+"",OperationType.obmoneyTransfer);
+			} 
+			else {
+				checkAccNoForPresence(trasactionAccountNumber);
+				inBankTransfer(accountNumber, trasactionAccountNumber, amount, description);
+			}
 		}
 	}	
 
@@ -177,7 +182,7 @@ public class Customer {
 		checkAccNoForPresence(accountNumber);
 		customer.setPrimaryAccount(accountNumber);
 		setTime();
-		log.log("PrimaryAccount :"+accountNumber,OperationType.switchPrimary);
+		LogAgent.log("PrimaryAccount :"+accountNumber,OperationType.switchPrimary);
 	}
 	
 	public void switchPrimaryAccount(long accountNumber,long id) throws BankException, InputDefectException {
@@ -302,7 +307,7 @@ public class Customer {
 			TransactionHistory historyReceiver = historyPojo("moneyTransfer", amount, tId, trasactionAccountNumber, description,
 					tBalanceAmount + amount, accountNumber);
 			customer.inBank(historySender, historyReceiver);
-			log.log(-amount+"",OperationType.obmoneyTransfer);
+			LogAgent.log(-amount+"",OperationType.obmoneyTransfer);
 			break;
 		case "inactive":
 			throw new BankException("your reciptant account is blocked");
