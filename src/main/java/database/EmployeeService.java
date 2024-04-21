@@ -2,6 +2,8 @@ package database;
 
 import org.json.JSONObject;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+
 import pojo.Accounts;
 import pojo.Customers;
 import pojo.Users;
@@ -80,7 +82,7 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 					"BranchId= "+bankId+" and Status='active'");
 		return UtilityHelper.getInt(select(query),"count(*)");
 	}
-	
+	//TODO
 	public long inactiveAccount(long bankId) throws BankException, InputDefectException {
 		StringBuilder query=builder.selectAllCountFromWherePrep("accounts",
 					"BranchId= "+bankId+" and Status='inactive'");
@@ -99,5 +101,17 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 	return UtilityHelper.getInt(select(query),"count(*)");
 	}
 
+	@Override
+	public void alterUsers(Users user) throws BankException {
+		long id= user.getId();
+		StringBuilder query= builder.pojoToUpadteQuery("users", user, "Id ="+id);
+		update(query, user);
+	}
 
+	@Override
+	public void deleteUsers(long userId) throws BankException {
+		 StringBuilder query= builder.deleteFrom("users", "Id");
+		  delete(query,userId);
+		
+	}
 }

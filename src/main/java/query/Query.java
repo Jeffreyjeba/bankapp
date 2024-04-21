@@ -24,6 +24,7 @@ public interface Query {
 	public StringBuilder singleSetWhere(String tableName, String field, String conditionField);
 	public StringBuilder singleSetWhere(String tableName, String field, String conditionField, String coditionValue);
 	public StringBuilder setStatus(String tableName,String Status ,String fieldname);
+	public StringBuilder pojoToUpadteQuery(String tableName,BankMarker data,String Condition) throws BankException;
 	// Delete query builder
 	public StringBuilder deleteFrom(String tableName,String fieldName);
 	// Create query builder

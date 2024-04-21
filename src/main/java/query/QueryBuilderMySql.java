@@ -3,6 +3,8 @@ package query;
 import java.lang.reflect.Field;
 import org.json.JSONObject;
 
+import com.mysql.cj.x.protobuf.MysqlxExpect.Open.Condition;
+
 import bank.Authenticator;
 import pojo.BankMarker;
 import pojo.UserData;
@@ -194,6 +196,8 @@ public class QueryBuilderMySql implements Query {
 			close(stringBuilder);
 			return stringBuilder;
 	}
+	
+	
 
 	// delete
 	@Override
@@ -259,6 +263,24 @@ public class QueryBuilderMySql implements Query {
 		} 
 	}
 	
+	@Override
+	public StringBuilder pojoToUpadteQuery(String tableName,BankMarker data,String Condition) throws BankException {
+		try {
+		StringBuilder field=new StringBuilder();
+		field.append("update ");
+		field.append(tableName);
+		field.append(" set ");
+		setFieldName(data, field);
+		field.append(" where ");
+		field.append(Condition);
+		field.append(" ;");
+		return field;
+		}
+		catch (IllegalAccessException | IllegalArgumentException  e) {
+			throw new BankException("error 4 ",e);
+		} 
+	}
+	
 	private void setFieldName(BankMarker data,StringBuilder fieldString,StringBuilder valueString) throws IllegalArgumentException, IllegalAccessException { 
 		Class className=data.getClass();
 		Field[] field=className.getDeclaredFields();
@@ -274,6 +296,23 @@ public class QueryBuilderMySql implements Query {
 		fieldString.deleteCharAt(fieldString.length() - 1);	
 		valueString.deleteCharAt(valueString.length() - 1);	
 	}
+	
+	
+	private void setFieldName(BankMarker data,StringBuilder fieldString) throws IllegalArgumentException, IllegalAccessException { 
+		Class className=data.getClass();
+		Field[] field=className.getDeclaredFields();
+		for(Field temp:field) {
+			temp.setAccessible(true);
+			Object valueObject= temp.get(data);
+			if(valueObject!=null) {
+				fieldString.append(fieldToTableName(temp.getName()));
+				fieldString.append("= ?,");
+			}	
+		}		
+		fieldString.deleteCharAt(fieldString.length() - 1);	
+	}
+	
+	
 	
 	private String fieldToTableName(String fieldName) {
 		return fieldName.substring(0, 1).toUpperCase()+fieldName.substring(1);	

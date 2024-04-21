@@ -1,6 +1,8 @@
 package operations;
 
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+
 import org.json.JSONObject;
 
 import bank.Authenticator;
@@ -33,6 +35,23 @@ public class Employee extends Customer{
 		employee.addUsers(user);
 		LogAgent.log("-",OperationType.addUser);
 	}
+	
+	public void alterUsers(JSONObject userJson) throws BankException,InputDefectException{
+		UtilityHelper.nullCheck(userJson);
+		Users user=josnToUsers(userJson);
+		checkIdUserPresence(user.getId());
+		validateUsers(userJson);
+		setTime();
+		Authenticator.user.get().setActiveId(UtilityHelper.getLong(userJson,"Id"));
+		setCreationDetails(user);
+		employee.alterUsers(user);
+		LogAgent.log("-",OperationType.addUser);
+	}
+	
+	public void deleteUser(long UserId) throws BankException {
+		employee.deleteUsers(UserId);
+	}
+	
 	public void addCustomers(JSONObject customerJson) throws BankException,InputDefectException{
 		UtilityHelper.nullCheck(customerJson);
 		Customers customer=josnToCustomers(customerJson);
@@ -163,6 +182,8 @@ public class Employee extends Customer{
 	protected void setUserForAccounts(long accountNumber) throws BankException, InputDefectException {
 		Authenticator.user.get().setActiveId(employee.userForAccountNumber(accountNumber));
 	}
+	
+	
 	
 	
 	protected void setCreationDetails(LogMethods bank) {

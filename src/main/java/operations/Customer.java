@@ -143,7 +143,7 @@ public class Customer {
 	}
 	
 	public JSONObject viewProfile(long id) throws BankException, InputDefectException {
-		checkIdCustomerPresence(id);
+		checkIdUserPresence(id);
 		return customer.viewProfile(id);
 	}
 	

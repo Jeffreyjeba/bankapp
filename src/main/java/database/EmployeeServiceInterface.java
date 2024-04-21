@@ -12,6 +12,10 @@ public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	
 	
 	public void addUsers(Users user) throws BankException;
+	
+	public void alterUsers(Users user) throws BankException;
+	
+	public void deleteUsers(long userId) throws BankException;
 
 	public void addCustomers(Customers customer) throws BankException;
 

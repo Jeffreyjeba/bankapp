@@ -100,11 +100,25 @@ abstract public class DataStorageService implements DataStorage {
 		}
 	}
 	
+	
+	public boolean update(CharSequence seq, BankMarker input) throws BankException {
+		try (Connection connection = getConnection();) {
+			try (PreparedStatement preparedStatement = connection.prepareStatement(seq.toString());) {
+				setParameter(preparedStatement, input);
+				return preparedStatement.execute();
+			}
+		}
+		catch (SQLException e) {
+			throw new BankException("technical error accured contact bank or technical support",e);
+		}
+	}
+	
 	@Override
 	public boolean delete(CharSequence seq,Object...input) throws BankException {
 		try (Connection connection = getConnection();) {
 			try (PreparedStatement preparedStatement = connection.prepareStatement(seq.toString());) {
 				setParameter(preparedStatement, input);
+				System.out.println(preparedStatement);
 				return preparedStatement.execute();
 			}
 		}
