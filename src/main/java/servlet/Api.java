@@ -27,6 +27,7 @@ public class Api extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException {
 		response.setContentType("application/json");
+		System.out.println("hedvwehf");
 		if(checkApiKey(request)) {
 		try {
 			Long id=Long.parseLong(request.getHeader("id"));
@@ -53,8 +54,7 @@ public class Api extends HttpServlet {
 	        admin.addUsers(jsonObject);
 	        }
 	        catch (BankException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
 			}
 	        catch (InputDefectException e) {
 				// TODO Auto-generated catch block
@@ -90,15 +90,6 @@ public class Api extends HttpServlet {
 			}
 	    }
 
-	    @Override
-	    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	       try {
-			admin.deleteUser(16);
-		} catch (BankException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    }
 	
 	
 	
