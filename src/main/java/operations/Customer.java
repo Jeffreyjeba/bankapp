@@ -19,29 +19,33 @@ public class Customer {
 	
 	private CustomerServiceInterface customer = ServiceFactory.getCustomerService();
 	
-	
 	public long getBalance(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber=UtilityHelper.getLong(customerJson,"AccountNumber");
 		checkAccNoForPresence(accountNumber);
 		return UtilityHelper.getLong(customer.getBalance(accountNumber),"Balance");
 	}
+	
+	public long getBalance(long accountNumber) throws BankException, InputDefectException {
+		JSONObject json = new JSONObject();
+		UtilityHelper.put(json, "AccountNumber", accountNumber);
+		return getBalance(json); 
+	}
 
 	public long[] getAccounts(long id) throws BankException, InputDefectException {
 		checkIdCustomerPresence(id);
 		JSONArray jArray = customer.getAccounts(id);
-		System.out.println(jArray);
 		if (jArray.length() == 0) {
 			throw new BankException("Accounts for this Id dosent exist");
 		}
 		return jArrayToArray(jArray);
 	}
 
-	public void resetPassword(JSONObject customerJson) throws BankException, InputDefectException {
+	public void resetPassword(JSONObject customerJson) throws BankException, InputDefectException { //TODO
 		UtilityHelper.nullCheck(customerJson);
 		long id=UtilityHelper.getLong(customerJson,"Id");
 		String password = UtilityHelper.getString(customerJson, "Password");
-		checkIdUserPresence(id);
+		checkIdUserPresence(id);		
 		String newPasswordHash = UtilityHelper.passHasher(password);
 		setTime();
 		Authenticator.user.get().setActiveId(id);
@@ -54,7 +58,6 @@ public class Customer {
 		JSONObject resultJson = customer.accountStatus(accountNumber);
 		return UtilityHelper.getString(resultJson, "Status");
 	}
-
 	
 	public void debit(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
@@ -162,9 +165,7 @@ public class Customer {
 	}
 	
 	public void logout() {
-		/*
-		 * Authenticator.idTag(0); Authenticator.accountTag(0);
-		 */
+		Authenticator.user.remove();
 	}
 	
 	public JSONObject getPrimaryAccount(long id) throws BankException, InputDefectException {
@@ -206,6 +207,7 @@ public class Customer {
 	
 	
 	private void removePrimaryAccount(JSONObject customerJson) throws BankException, InputDefectException {
+		UtilityHelper.nullCheck(customerJson);
 		long accountNumber=UtilityHelper.getLong(customerJson, "AccountNumber");
 		customer.removePrimaryAccount(accountNumber);
 	}
@@ -258,11 +260,7 @@ public class Customer {
 		return ifscCode.substring(0, 3).equals("rey");
 	}
 	
-	public long getBalance(long accountNumber) throws BankException, InputDefectException {
-		JSONObject json = new JSONObject();
-		UtilityHelper.put(json, "AccountNumber", accountNumber);
-		return getBalance(json); 
-	}
+	
 	 
 	protected boolean resolveTransaction(long accountNumber,long trasactionAccountNumber ,String ifscCode) throws BankException {
 		if (accountNumber == trasactionAccountNumber) {
@@ -282,6 +280,7 @@ public class Customer {
 	}
 
 	protected long[] jArrayToArray(JSONArray jArray) throws BankException, InputDefectException {
+		UtilityHelper.nullCheck(jArray);
 		int size = jArray.length();
 		long[] array = new long[size];
 		for (int iterator = 0; iterator < size; iterator++) {
@@ -290,7 +289,6 @@ public class Customer {
 		}
 		return array;
 	}
-	
 	
 	protected void inBankTransfer(long accountNumber, long trasactionAccountNumber, long amount, String description)
 			throws BankException, InputDefectException {
@@ -316,10 +314,7 @@ public class Customer {
 		}
 	}
 	
-	
-	
 	//util
-	
 	
 	protected void setTime() {
 		Authenticator.user.get().setTime(System.currentTimeMillis());
@@ -331,8 +326,6 @@ public class Customer {
 
 
 	// check methods
-
-
 	
 	protected void checkIdUserPresence(long id) throws BankException, InputDefectException {
 		customer.checkUserPresence(id, "Id");

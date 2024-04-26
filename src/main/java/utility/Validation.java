@@ -29,6 +29,10 @@ public class Validation {
 	public  static boolean validatePanNumber(CharSequence panNumber) {
 		return comparator("^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$", panNumber);
 	}
+	
+	public static boolean sqlInjectionCheck(CharSequence data) {
+		return comparator("",data);
+	}
 		
 	
 	private static boolean comparator(String regex,CharSequence subject) {
