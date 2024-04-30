@@ -24,9 +24,9 @@
                 <div class="transaction" id="resetPassword">
                 <table>
                 <tr><th><h3>CHANGE PASSWORD</h3></th></tr>
-                 <tr><td><input name="oldPass" type="password" placeholder="Old Password" required></td></tr>
-                 <tr><td><input name="newPass" type="password"placeholder="New Password" required></td></tr>
-                 <tr><td><input name="confoPass" type="password"placeholder="Reenter New Password" required></td></tr>
+                 <tr><td><input name="oldPass" maxlength="20" type="password" placeholder="Old Password" required></td></tr>
+                 <tr><td><input name="newPass"maxlength="20" type="password"placeholder="New Password" required></td></tr>
+                 <tr><td><input name="confoPass" maxlength="20" type="password"placeholder="Reenter New Password" required></td></tr>
                  <tr><td><button type="submit">change</button></td></tr>
                  <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>

@@ -20,11 +20,11 @@
                 <div class="transaction" id="moneyTransfer">
                  <table>	
                  	<tr><th><h3>ADD AUTHORITY</h3></th></tr>
-                    <tr><td><input name="id" type="number" placeholder="Id" required></td></tr>
-                    <tr><td><input name="name" type="text" placeholder="Name" required></td></tr>
-                    <tr><td><input name="emailId" type="email"placeholder="EmailId" required></td></tr>
+                    <tr><td><input min="1" max="99999" step="1" name="id" type="number" placeholder="Id" required></td></tr>
+                    <tr><td><input maxlength="25" name="name" type="text" placeholder="Name" required></td></tr>
+                    <tr><td><input maxlength="25" name="emailId" type="email"placeholder="EmailId" required></td></tr>
                     <tr><td><input name="phoneNumber" type="number"placeholder="Phone Number" pattern="^[7-9]{1}[0-9]{9}$" required></td></tr>
-                    <tr><td><input name="branchId" type="number" placeholder="BranchId" required></td></tr>
+                    <tr><td><input min="1" step="1" max="999999" name="branchId" type="number" placeholder="BranchId" required></td></tr>
                     <tr><td><label > Type :</label>
                     	<select name="type">
 	                     <option>employee</option>

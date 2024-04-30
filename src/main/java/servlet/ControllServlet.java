@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -243,6 +244,7 @@ public class ControllServlet extends HttpServlet {
 			boolean access = auth.login(id, password);
 			if (access) {
 				request.getSession().setAttribute("id", id);
+				request.setAttribute("fromLogin", "true");
 				auth.validateUser(id);
 				authorize(id, request, response);
 			}
@@ -298,6 +300,9 @@ public class ControllServlet extends HttpServlet {
 			if(session.getAttribute("auth")==null) {
 				session.setAttribute("auth", "customer");
 			}
+			if(session.getAttribute("fromLogin")!=null) {
+				session.setAttribute("auth", "customer");
+			}
 			session.setAttribute("currentAccount", primary);
 			session.setAttribute("accounts", accounts);
 			customerDashboard(request, response);
@@ -346,6 +351,7 @@ public class ControllServlet extends HttpServlet {
 		try {
 			long accountNumber = Long.parseLong(request.getParameter("primAccount"));
 			long id = (long) request.getSession().getAttribute("id");
+			customer.checkUserAndAccount(id, accountNumber);
 			customer.switchPrimaryAccount(accountNumber, id);
 			HttpSession session = request.getSession();
 			request.setAttribute("primaryAccount", accountNumber);
@@ -358,13 +364,21 @@ public class ControllServlet extends HttpServlet {
 		}
 	}
 
-	protected void switchAccount(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void switchAccount(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		try {
 		long accountNumber = Long.parseLong(request.getParameter("account"));
+		long id = (long) request.getSession().getAttribute("id");
+		customer.checkUserAndAccount(id, accountNumber);
 		HttpSession session = request.getSession();
 		session.setAttribute("currentAccount", accountNumber);
 		request.setAttribute("successMessage", "Account switched");
-		request.getRequestDispatcher("/WEB-INF/accountSwitch.jsp").forward(request, response);
+		}
+		catch (BankException | InputDefectException e) {
+			request.setAttribute("errorMessage", e.getMessage());
+		}
+		finally {
+			request.getRequestDispatcher("/WEB-INF/accountSwitch.jsp").forward(request, response);
+		}
 	}
 
 	protected void credit(HttpServletRequest request, HttpServletResponse response)
@@ -372,10 +386,11 @@ public class ControllServlet extends HttpServlet {
 		try {
 			HttpSession session = request.getSession();
 			long id = (long) session.getAttribute("id");
+			long accountNumber=Long.parseLong(request.getParameter("account"));
+			customer.checkUserAndAccount(id, accountNumber);
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
 			}
-			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long amount = Long.parseLong(request.getParameter("amount"));
 			String description = (String) request.getParameter("description");
 			String password = (String) request.getParameter("password");
@@ -383,7 +398,6 @@ public class ControllServlet extends HttpServlet {
 			if (!access) {
 				throw new BankException("Wrong password try again");
 			}
-
 			JSONObject json = new JSONObject();
 			UtilityHelper.put(json, "AccountNumber", accountNumber);
 			UtilityHelper.put(json, "Amount", amount);
@@ -403,6 +417,7 @@ public class ControllServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long id = (long) session.getAttribute("id");
+			customer.checkUserAndAccount(id, accountNumber);
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
 			}
@@ -431,9 +446,9 @@ public class ControllServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			HttpSession session = request.getSession();
-			/* System.out.println(session.getId()); */
 			long accountNumber=Long.parseLong(request.getParameter("account"));
 			long id = (long) session.getAttribute("id");
+			customer.checkUserAndAccount(id, accountNumber);
 			if(!session.getAttribute("auth").equals("customer")) {
 				id= (long) session.getAttribute("empId");
 			}
@@ -467,6 +482,7 @@ public class ControllServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			long accountNumber = (long) session.getAttribute("currentAccount");
 			long id = (long) session.getAttribute("id");
+			customer.checkUserAndAccount(id, accountNumber);
 			long balance = customer.getBalance(accountNumber);
 			request.setAttribute("balance", balance);
 			request.setAttribute("type","debit");
@@ -495,8 +511,12 @@ public class ControllServlet extends HttpServlet {
 				JSONObject pass = UtilityHelper.put(new JSONObject(), "Password", newPass);
 				UtilityHelper.put(pass, "Id", id);
 				customer.resetPassword(pass);
+				request.setAttribute("successMessage", "Password Changed successfull");
 			}
-			request.setAttribute("successMessage", "Password Changed successfull");
+			else {
+				request.setAttribute("errorMessage","wrong Password");
+			}
+			
 		} 
 		catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
@@ -529,6 +549,7 @@ public class ControllServlet extends HttpServlet {
 			id = (long) session.getAttribute("id");
 			request.setAttribute("accounts",customer.getAccounts(id));
 			long accountNumber = (long) session.getAttribute("currentAccount");
+			customer.checkUserAndAccount(id, accountNumber);
 			int maxPages=customer.getPages(accountNumber,10);
 			if(page<=0) {
 				page=1;
@@ -626,7 +647,7 @@ public class ControllServlet extends HttpServlet {
 			JSONObject branch= employee.branchDetails(branchId);
 			request.setAttribute("branch", branch);
 		}
-		catch (BankException e) {
+		catch (InputDefectException | BankException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
@@ -665,7 +686,7 @@ public class ControllServlet extends HttpServlet {
 	protected void addAccountGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			if( request.getSession().getAttribute("auth").equals("employee")) {
-				request.setAttribute("branchId",employee.getBranchId((long) request.getAttribute("empId")));
+				request.setAttribute("branchId",employee.getBranchId((long) request.getAttribute("empId")));  //TODO	
 			}
 			else if (request.getSession().getAttribute("auth").equals("admin")) {
 				request.setAttribute("allBranch",admin.getAllBranchId());
@@ -686,9 +707,11 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json,"BranchId",Integer.parseInt(request.getParameter("branchId")));
 			UtilityHelper.put(json,"Balance",Long.parseLong(request.getParameter("balance")));
 			UtilityHelper.put(json,"Status","active");	
+			admin.validateBranchId(Integer.parseInt(request.getParameter("branchId")));
 			employee.createAccount(json);
 			request.setAttribute("successMessage", "Account created successfully");
 		} catch (BankException | InputDefectException e) {
+			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {
@@ -835,7 +858,14 @@ public class ControllServlet extends HttpServlet {
 
 	protected void adminDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			long id = (long) request.getSession().getAttribute("id");
 			int branchId=(int) request.getSession().getAttribute("branchId");
+			try { 
+			admin.validateBranchId(branchId); 
+			}
+			catch (BankException e) {
+				branchId=UtilityHelper.getInt(admin.getBranchId(id), "BranchId");
+			}
 			JSONObject branch= admin.branchDetails(branchId);
 			JSONObject branchAccount=admin.branchAccountDetails(branchId);
 			request.setAttribute("branch", branch);
@@ -855,6 +885,9 @@ public class ControllServlet extends HttpServlet {
 		try {
 			JSONObject json=new JSONObject();
 			String type=request.getParameter("type");
+			if(!(type.equals("admin")||type.equals("employee"))) {
+				throw new BankException("Invalid authority");
+			}
 			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
 			UtilityHelper.put(json,"Name",request.getParameter("name"));
 			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));

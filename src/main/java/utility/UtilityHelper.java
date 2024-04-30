@@ -49,10 +49,11 @@ public class UtilityHelper {
 	}
 
 	public static void checkNegative(long number) throws InputDefectException {
-		if (number < 0) {
-			throw new InputDefectException("The number cannot be negative");
+		if (number <= 0) {
+			throw new InputDefectException("Field cannot be negative or zero");
 		}
 	}
+	
 
 	public static void checkTwo(int min, int max) throws InputDefectException {
 		if (min > max) {

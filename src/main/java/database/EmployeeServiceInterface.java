@@ -43,4 +43,6 @@ public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	
 	public long totalAccounts(long bankId) throws BankException, InputDefectException ;
 	
+	public void checkBranchPrecence(long value , String field) throws BankException, InputDefectException ;
+	
 }

@@ -13,6 +13,7 @@ import pojo.TransactionHistory;
 import utility.BankException;
 import utility.InputDefectException;
 import utility.UtilityHelper;
+import utility.Validation;
 
 
 public class Customer {
@@ -22,6 +23,7 @@ public class Customer {
 	public long getBalance(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber=UtilityHelper.getLong(customerJson,"AccountNumber");
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		return UtilityHelper.getLong(customer.getBalance(accountNumber),"Balance");
 	}
@@ -33,6 +35,7 @@ public class Customer {
 	}
 
 	public long[] getAccounts(long id) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
 		checkIdCustomerPresence(id);
 		JSONArray jArray = customer.getAccounts(id);
 		if (jArray.length() == 0) {
@@ -44,16 +47,23 @@ public class Customer {
 	public void resetPassword(JSONObject customerJson) throws BankException, InputDefectException { //TODO
 		UtilityHelper.nullCheck(customerJson);
 		long id=UtilityHelper.getLong(customerJson,"Id");
+		Validation.validateUserId(id);
 		String password = UtilityHelper.getString(customerJson, "Password");
-		checkIdUserPresence(id);		
-		String newPasswordHash = UtilityHelper.passHasher(password);
-		setTime();
-		Authenticator.user.get().setActiveId(id);
-		LogAgent.log("-",OperationType.resetPassword);
-		customer.resetPassword(id,newPasswordHash);
+		if(Validation.validatePassword(password)) {
+			checkIdUserPresence(id);		
+			String newPasswordHash = UtilityHelper.passHasher(password);
+			setTime();
+			Authenticator.user.get().setActiveId(id);
+			LogAgent.log("-",OperationType.resetPassword);
+			customer.resetPassword(id,newPasswordHash);
+		}
+		else {
+			throw new BankException("Wrong Password format");
+		}
 	}
 
 	public String accountStatus(long accountNumber) throws BankException, InputDefectException {
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		JSONObject resultJson = customer.accountStatus(accountNumber);
 		return UtilityHelper.getString(resultJson, "Status");
@@ -62,10 +72,13 @@ public class Customer {
 	public void debit(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
+		Validation.validateAmount(amount);
 		String description = UtilityHelper.getString(customerJson, "Description");
+		Validation.description(description);
 		long tId = System.currentTimeMillis();
 		synchronized (LockSupplier.getLock(accountNumber)) {
 			long balanceAmount = getBalance(customerJson);
@@ -80,11 +93,14 @@ public class Customer {
 	public void credit(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
 		long tId = System.currentTimeMillis();
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
+		Validation.validateAmount(amount);
 		String description = UtilityHelper.getString(customerJson, "Description");
+		Validation.description(description);
 		synchronized (LockSupplier.getLock(accountNumber)) {
 			long balanceAmount = getBalance(customerJson);
 			TransactionHistory history = historyPojo("credit", amount, tId, accountNumber, description, balanceAmount + amount,null);
@@ -97,12 +113,17 @@ public class Customer {
 	public void moneyTransfer(JSONObject customerJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(customerJson);
 		long accountNumber = UtilityHelper.getLong(customerJson, "AccountNumber");
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		resolveAccountStatus(accountNumber);
 		long amount = UtilityHelper.getLong(customerJson, "Amount");
+		Validation.validateAmount(amount);
 		long trasactionAccountNumber = UtilityHelper.getLong(customerJson, "TransactionAccountNumber");
+		Validation.validateAccountNumber(trasactionAccountNumber);
 		String description = UtilityHelper.getString(customerJson, "Description");
+		Validation.description(description);
 		String ifscCode = UtilityHelper.getString(customerJson, "IfscCode");
+		Validation.validateIfsc(ifscCode);
 		boolean inBank = resolveTransaction(accountNumber, trasactionAccountNumber, ifscCode);
 		synchronized (LockSupplier.getLock(accountNumber)) {
 			long balanceAmount = getBalance(customerJson);
@@ -132,7 +153,10 @@ public class Customer {
 	}
 	
 	public JSONArray transactionHistory(long accountNumber,int quantity,int page) throws BankException, InputDefectException {
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
+		UtilityHelper.checkNegative(quantity);
+		UtilityHelper.checkNegative(page);
 		JSONArray jArray=customer.getTransactionHistory(accountNumber,quantity ,page);
 		if (jArray.length() == 0) {
 			throw new BankException("NO transacations made");
@@ -141,17 +165,23 @@ public class Customer {
 	}
 	
 	public int getPages(long accountNumber,int quantity) throws BankException, InputDefectException {
+		Validation.validateAccountNumber(accountNumber);
+		UtilityHelper.checkNegative(quantity);
 		checkAccNoForPresence(accountNumber);
 		return customer.pageCount(accountNumber, quantity);
 	}
 	
 	public JSONObject viewProfile(long id) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
 		checkIdUserPresence(id);
 		return customer.viewProfile(id);
 	}
 	
 	public int getPages(JSONObject customerJson,int quantity,long searchMilli) throws BankException, InputDefectException {
 		long accountNumber=UtilityHelper.getLong(customerJson, "AccountNumber");
+		Validation.validateAccountNumber(accountNumber);
+		UtilityHelper.checkNegative(quantity);
+		checkAccNoForPresence(accountNumber);
 		return customer.pageCount(accountNumber, quantity,searchMilli);
 	}
 	
@@ -169,6 +199,7 @@ public class Customer {
 	}
 	
 	public JSONObject getPrimaryAccount(long id) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
 		checkIdCustomerPresence(id);
 		JSONObject json= customer.getPrimaryAccount(id);
 		if(json==null) {
@@ -180,6 +211,7 @@ public class Customer {
 	}
 	
 	public void setPrimaryAccount(long accountNumber) throws BankException, InputDefectException {
+		Validation.validateUserId(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		customer.setPrimaryAccount(accountNumber);
 		setTime();
@@ -187,6 +219,8 @@ public class Customer {
 	}
 	
 	public void switchPrimaryAccount(long accountNumber,long id) throws BankException, InputDefectException {
+		Validation.validateAccountNumber(accountNumber);
+		Validation.validateUserId(id);
 		checkIdCustomerPresence(id);
 		checkAccNoForPresence(accountNumber);
 		JSONObject primaryJson= getPrimaryAccount(id);
@@ -200,9 +234,29 @@ public class Customer {
 	}
 	
 	public JSONObject getAccountDetail(long accountNumber) throws BankException, InputDefectException {
+		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		return customer.getAccountDetails(accountNumber);
 	
+	}
+	
+	public void checkUserAndAccount(long id,long accountNumber) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
+		Validation.validateAccountNumber(accountNumber);
+		checkIdUserPresence(id);
+		checkAccNoForPresence(accountNumber);
+		long accounts[]= getAccounts(id);
+		boolean accountPresence=false;
+		for(int i=0;i<accounts.length;i++) {
+			if(accounts[i]==accountNumber) {
+				accountPresence=true;
+			}
+		}
+		if(!accountPresence) {
+			System.err.println("errorhit");
+			throw new BankException("Account and user Miss match");
+		}
+		
 	}
 	
 	
@@ -289,6 +343,7 @@ public class Customer {
 		}
 		return array;
 	}
+	
 	
 	protected void inBankTransfer(long accountNumber, long trasactionAccountNumber, long amount, String description)
 			throws BankException, InputDefectException {

@@ -22,8 +22,8 @@
     <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
     <!-- Eprofile -->
     <br>
-    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
-    <br>
+  <%--   <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
+    <br> --%>
 </div>
 
 <%} else if(request.getSession().getAttribute("auth").equals("admin")){ %>

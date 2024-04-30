@@ -33,11 +33,11 @@
 							<%}%>
 	               			<%}%>
 	               			</select>
-                   <tr><td> <input name="recAccount" type="number" min="1" step="1" placeholder="Receiving Account" required></td></tr>
-                   <tr><td> <input name="ifsc" type="text" placeholder="Ifsc Code" required></td></tr>
-                   <tr><td><input name="amount" type="number" min="1" step="1" placeholder="Amount" required></td></tr>
-                   <tr><td><input name="description" maxlength="20" type="text" title="No arrow characters" pattern="[^<>]*" placeholder="Description" required></td></tr>
-                   <tr><td> <input name="password" type="password" placeholder="Password" required></td></tr>
+                   <tr><td> <input name="recAccount" type="number" min="1" step="1" max="999999" placeholder="Receiving Account" required></td></tr>
+                   <tr><td> <input name="ifsc" type="text" placeholder="Ifsc Code" maxlength="8" required></td></tr>
+                   <tr><td><input name="amount" type="number" min="1" step="1" max="999999999" placeholder="Amount" required></td></tr>
+                   <tr><td><input name="description" maxlength="25" type="text" title="No arrow characters" pattern="[^<>]*" placeholder="Description" required></td></tr>
+                   <tr><td> <input name="password" maxlength="20" type="password" placeholder="Password" required></td></tr>
                    <tr><td> <button type="submit">transfer</button></td></tr>
                    <tr><td><jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                 </table>

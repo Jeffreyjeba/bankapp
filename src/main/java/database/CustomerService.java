@@ -24,7 +24,7 @@ public class CustomerService extends DataStorageService implements CustomerServi
 
 	private static class BillpoughCustomer {
 		private static final CustomerService customerService = new CustomerService(
-				"jdbc:mysql://localhost:3306/rey_bank", "root", "0000");
+				"jdbc:mysql://localhost:3306/rey_bank", "root", "");
 	}
 
 	public static CustomerService getCustomerService() {

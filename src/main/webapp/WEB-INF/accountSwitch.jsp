@@ -65,6 +65,7 @@
 						 </form>
                         </td>
                     </tr>
+                    <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                     <!-- <tr>
                     <td><button form="01" type="submit">switch</button></td>
                     </tr> -->

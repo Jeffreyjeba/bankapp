@@ -22,8 +22,8 @@
 				<div class="transaction" id="moneyTransfer">
 				<table>
 					<tr><th><h3>ADD ACCOUNT</h3></th></tr>
-					<tr><td><input min="1" step="1" name="userId" type="number" placeholder="User Id" required></tr></td>
-					<tr><td><input  min="1" step="1" name="accountNumber" type="number" placeholder="New Account Number" required></tr></td>
+					<tr><td><input min="1" step="1" max="999999" name="userId" type="number" placeholder="User Id" required></tr></td>
+					<tr><td><input  min="1" step="1" max="999999" name="accountNumber" type="number" placeholder="New Account Number" required></tr></td>
 					<%if(request.getSession().getAttribute("auth").equals("employee")){ 
 					int branchId=(int) request.getSession().getAttribute("branchId");%>
 
@@ -36,12 +36,11 @@
 						<% 
                         	int length=allBranch.length();
                         for(int temp=0;length>temp;temp++){%>
-						<option><%=allBranch.getJSONObject(temp).getLong("BranchId")%>
-						<option>
+							<option><%=allBranch.getJSONObject(temp).getLong("BranchId")%></option>
 							<%} %>
 						</select></tr></td>
 						<%} %> 
-					<tr><td><input name="balance" type="number"  min="0" step="1" placeholder="Initial Amount" required></tr></td>
+					<tr><td><input name="balance" type="number"  min="0" step="1" max="999999999" placeholder="Initial Amount" required></tr></td>
 					<tr><td><button type="submit">Create</button></tr></td>
 					 <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
 				</table>

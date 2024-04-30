@@ -20,8 +20,8 @@
             <form action="activateCustomer" method="post">
             	<table>
                     <tr><th><h3>ACTIVATE CUSTOMER</h3></th></tr>
-                    <tr><td><input name="id" type="number" placeholder="Id" required></td></tr>
-                    <tr><td><input name="password" type="password" placeholder="Password" required></td></tr>
+                    <tr><td><input min="1" step="1" max="999999" name="id" type="number" placeholder="Id" required></td></tr>
+                    <tr><td><input maxlength="25" name="password" type="password" placeholder="Password" required></td></tr>
                     <tr><td><input name="function" value="activate" type="hidden"></td></tr>
                     <tr><td><button type="submit">Activate</button></td></tr>
                     <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
@@ -37,8 +37,8 @@
             <form action="deactivateCustomer" method="post">
                   <table>
                     <tr><th><h3>DEACTIVATE CUSTOMER</h3></th></tr>
-                    <tr><td><input name="id" type="number" placeholder="Id" required><tr><td>
-                    <tr><td><input name="password" type="password" placeholder="Password" required><tr><td>
+                    <tr><td><input  min="1" step="1" max="999999" name="id" type="number" placeholder="Id" required><tr><td>
+                    <tr><td><input maxlength="25" name="password" type="password" placeholder="Password" required><tr><td>
                     <tr><td><input name="function" value="inactivate" type="hidden"></td></tr>
                     <tr><td><button type="submit">Deactive</button><tr><td>
                      <tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>

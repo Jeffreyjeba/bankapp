@@ -1,9 +1,6 @@
 package database;
 
 import org.json.JSONObject;
-
-import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
-
 import pojo.Accounts;
 import pojo.Customers;
 import pojo.Users;
@@ -19,7 +16,7 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 	}
 	
 	private static class BillpoughEmployee{
-		private static final EmployeeService employeeService=new EmployeeService("jdbc:mysql://localhost:3306/rey_bank", "root", "0000");
+		private static final EmployeeService employeeService=new EmployeeService("jdbc:mysql://localhost:3306/rey_bank", "root", "");
 	}
 	
 	public static EmployeeService getEmployeeService() {
@@ -113,5 +110,9 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 		 StringBuilder query= builder.deleteFrom("users", "Id");
 		  delete(query,userId);
 		
+	}
+	
+	public void checkBranchPrecence(long value, String field) throws BankException, InputDefectException {
+		checkLongPresence(value, "branch", field, field);
 	}
 }

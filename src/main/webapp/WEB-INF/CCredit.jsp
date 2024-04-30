@@ -33,9 +33,9 @@
 							<%}%>
 	               			<%}%>
 	               			</select>
-               		<tr><td><input name="amount" min="1" step="1" type="number"placeholder="Amount" required><br></td></tr>
-               		<tr><td><input name="description" maxlength="20" title="No arrow characters" pattern="[^<>]*" type="text"placeholder="Description" required><br></td></tr>
-               		<tr><td><input name="password" type="password" placeholder="Password" required><br></td></tr>
+               		<tr><td><input name="amount" min="1" max="999999999" step="1" type="number"placeholder="Amount" required><br></td></tr>
+               		<tr><td><input name="description" maxlength="25" title="No arrow characters" pattern="[^<>]*" type="text"placeholder="Description" required><br></td></tr>
+               		<tr><td><input name="password" maxlength="20" type="password" placeholder="Password" required><br></td></tr>
                		<tr><td><button type="submit">credit</button></td></tr>
                		<tr><td> <jsp:include page="/WEB-INF/common/error.jsp" /></td></tr>
                   </table>

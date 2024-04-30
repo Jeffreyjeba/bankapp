@@ -15,7 +15,7 @@ public class AuthendicatorService extends DataStorageService implements Authendi
 	}
 	
 	private static class BillpoughAuthendicator{
-		private static final AuthendicatorService authendicatorService=new AuthendicatorService("jdbc:mysql://localhost:3306/rey_bank", "root", "0000");
+		private static final AuthendicatorService authendicatorService=new AuthendicatorService("jdbc:mysql://localhost:3306/rey_bank", "root", "");
 	}
 	
 	public static AuthendicatorService getAuthendicatorService() {

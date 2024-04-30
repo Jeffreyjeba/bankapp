@@ -22,7 +22,7 @@ public interface AdminServiceInterface extends EmployeeServiceInterface{
 	
 	public void checkBranchAbsence(long value , String field) throws BankException, InputDefectException ;
 
-	public void checkBranchPrecence(long value , String field) throws BankException, InputDefectException ;
+	
 	
 	public void checkEmployeeAbsence(long value , String field) throws BankException, InputDefectException ;
 

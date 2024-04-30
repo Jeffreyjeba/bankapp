@@ -2,7 +2,6 @@ package operations;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import bank.EmployeeType;
 import bank.OperationType;
 import bank.ServiceFactory;
@@ -12,6 +11,7 @@ import pojo.Employees;
 import utility.BankException;
 import utility.InputDefectException;
 import utility.UtilityHelper;
+import utility.Validation;
 
 public class Admin extends Employee {
 
@@ -20,6 +20,7 @@ public class Admin extends Employee {
 	public void createBranch(JSONObject branchJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(branchJson);
 		Branch branch=jsonToBranch(branchJson);
+		validateCreateBranch(branch);
 		long branchId = branch.getBranchId();
 		checkBranchIdAbsence(branchId);
 		setTime();
@@ -35,6 +36,7 @@ public class Admin extends Employee {
 	public void addEmployee(JSONObject emp) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(emp);
 		Employees employee = jsonToEmployee(emp);
+		validateCreateEmployee(employee);
 		checkIdUserPresence(employee.getId());
 		checkForWorkersAbsence(employee.getId());
 		checkBranchIdPresence(employee.getBranchId());
@@ -47,6 +49,7 @@ public class Admin extends Employee {
 	public void removeEmployee(JSONObject employee) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(employee);
 		long id = UtilityHelper.getLong(employee, "Id");
+		Validation.validateUserId(id);
 		checkForWorkersPresence(id);
 		setTime();
 		admin.removeEmployee(id);
@@ -54,6 +57,7 @@ public class Admin extends Employee {
 	}
 	
 	public void activateEmployee(long id) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
 		checkForWorkersPresence(id);
 		setTime();
 		admin.activateCustomer(id);
@@ -61,14 +65,29 @@ public class Admin extends Employee {
 	}
 	
 	public void inactivateEmployee(long id) throws BankException, InputDefectException {
+		Validation.validateUserId(id);
 		checkForWorkersPresence(id);
 		setTime();
 		admin.deactivateCustomer(id);
 		LogAgent.log("-",OperationType.deactivateEmployee);
 	}
 
-	public JSONArray getAllBranchId() throws BankException, InputDefectException {
+	public JSONArray getAllBranchId() throws BankException {
 		return admin.getAllBranchId();
+	}
+	
+	public void validateBranchId(long branchId) throws BankException {
+		JSONArray jArray= admin.getAllBranchId();
+		int length=jArray.length();
+		boolean flag=false;
+        for(int temp=0;length>temp;temp++){
+			if(jArray.getJSONObject(temp).getLong("BranchId")==branchId) {
+				flag=true;
+			}
+        }
+        if(!flag) {
+        	throw new BankException("Invalid Branch Id");
+        }
 	}
 
 	// checkers methods
@@ -103,5 +122,18 @@ public class Admin extends Employee {
 		branch.setBranchName(UtilityHelper.getString(branchJson, "BranchName"));
 		branch.setIfscCode(UtilityHelper.getString(branchJson, "IfscCode"));
 		return branch;
+	}
+	
+	private void validateCreateEmployee(Employees employee) throws BankException {
+		Validation.validateUserId(employee.getId());
+		Validation.validateUserId(employee.getBranchId());
+	}
+	
+	
+	private void validateCreateBranch(Branch branch) throws BankException {
+		Validation.address(branch.getAddress());
+		Validation.validateUserId(branch.getBranchId());
+		Validation.branchName(branch.getBranchName());
+		Validation.validateIfsc(branch.getIfscCode());
 	}
 }

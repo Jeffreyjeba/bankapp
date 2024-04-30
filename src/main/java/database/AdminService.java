@@ -13,7 +13,7 @@ public class AdminService extends EmployeeService implements AdminServiceInterfa
 	}
 	
 	private static class BillpoughAdmin{
-		private static final AdminService adminService=new AdminService("jdbc:mysql://localhost:3306/rey_bank", "root", "0000");
+		private static final AdminService adminService=new AdminService("jdbc:mysql://localhost:3306/rey_bank", "root", "");
 	}
 	
 	public static AdminService getAdminService() {
@@ -45,9 +45,6 @@ public class AdminService extends EmployeeService implements AdminServiceInterfa
 		checkLongAbsence(value, "branch", field, field);
 	}
 
-	public void checkBranchPrecence(long value, String field) throws BankException, InputDefectException {
-		checkLongPresence(value, "branch", field, field);
-	}
 	
 	public void checkEmployeeAbsence(long value, String field) throws BankException, InputDefectException {
 		checkLongAbsence(value, "employees", field, field);
