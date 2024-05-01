@@ -14,8 +14,11 @@
 
      <jsp:include page="/WEB-INF/common/commonHeader.jsp" />
 
-
+	<%if(request.getSession().getAttribute("auth").equals("customer")){ %>
      <jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
+     <%}else{ %>
+     <jsp:include page="/WEB-INF/common/EleftnavBar.jsp" />
+     <%} %>
 
 
     <div class="content">

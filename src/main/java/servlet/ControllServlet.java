@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -130,6 +129,7 @@ public class ControllServlet extends HttpServlet {
 			case "/logout":
 				logout(request, response);  //to be added
 				break;
+			case "/LoginAuthendicate":
 			case "/login":
 				login(request, response);
 				break;
@@ -209,7 +209,7 @@ public class ControllServlet extends HttpServlet {
 				employeeProfile(request, response);
 				break;
 			case "/addAuthority":
-				request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
+				getAddAuthority(request, response);
 				break;
 			case "/manageEmployee":
 				request.getRequestDispatcher("/WEB-INF/admin/manageEmployee.jsp").forward(request, response);
@@ -255,6 +255,10 @@ public class ControllServlet extends HttpServlet {
 		}
 		catch(InputDefectException | BankException e) {
 			request.setAttribute("errorMessage", e.getMessage());
+			login(request, response);
+		}
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage", "Invalid Id");
 			login(request, response);
 		}
 	}
@@ -306,9 +310,16 @@ public class ControllServlet extends HttpServlet {
 			session.setAttribute("currentAccount", primary);
 			session.setAttribute("accounts", accounts);
 			customerDashboard(request, response);
-		} catch (BankException | InputDefectException e) {
+		} 
+		catch (BankException | InputDefectException e) {
+			if(request.getSession().getAttribute("auth")!=null) {
+				request.setAttribute("errorMessage", e.getMessage());
+				request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
+			}
+			else {
 			request.setAttribute("errorMessage", e.getMessage());
 			login(request, response);
+			}
 		}
 	}
 
@@ -331,19 +342,21 @@ public class ControllServlet extends HttpServlet {
 		}
 	}
 
-	protected void primaryAccount(HttpServletRequest request, HttpServletResponse response)
+	public void primaryAccount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		long id = (long) request.getSession().getAttribute("id");
 		try {
+			long id = (long) request.getSession().getAttribute("id");
 			long primary = UtilityHelper.getLong(customer.getPrimaryAccount(id), "AccountNumber");
 			request.setAttribute("primaryAccount", primary);
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
 		}
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Id");
+		}
 		finally {
 			request.getRequestDispatcher("/WEB-INF/CPriAccount.jsp").forward(request, response);
 		}
-
 	}
 
 	protected void switchPrimary(HttpServletRequest request, HttpServletResponse response)
@@ -359,6 +372,8 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("successMessage", "Primary account switched");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
+		} catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Account Number");
 		} finally {
 			request.getRequestDispatcher("/WEB-INF/CPriAccount.jsp").forward(request, response);
 		}
@@ -406,6 +421,8 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("successMessage", "Credit successfull");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
+		} catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Number");
 		} finally {
 			request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
 		}
@@ -437,7 +454,10 @@ public class ControllServlet extends HttpServlet {
 		} catch (BankException | InputDefectException e) {
 			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
-		} finally {
+		} 
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Number");
+		}finally {
 			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
 		}
 	}
@@ -471,7 +491,10 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("successMessage", "Money transfer successfull");
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
-		} finally {
+		}
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Number");
+		}finally {
 			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
 		}
 	}
@@ -508,6 +531,9 @@ public class ControllServlet extends HttpServlet {
 				if (!newPass.equals(confoPass)) {
 					throw new BankException("new pass words do not match");
 				}
+				if (auth.checkPassword(id, confoPass)) {
+					throw new BankException("The new password cannot be the old");
+				}
 				JSONObject pass = UtilityHelper.put(new JSONObject(), "Password", newPass);
 				UtilityHelper.put(pass, "Id", id);
 				customer.resetPassword(pass);
@@ -516,7 +542,6 @@ public class ControllServlet extends HttpServlet {
 			else {
 				request.setAttribute("errorMessage","wrong Password");
 			}
-			
 		} 
 		catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
@@ -551,6 +576,7 @@ public class ControllServlet extends HttpServlet {
 			long accountNumber = (long) session.getAttribute("currentAccount");
 			customer.checkUserAndAccount(id, accountNumber);
 			int maxPages=customer.getPages(accountNumber,10);
+			request.setAttribute("maxPage",maxPages);
 			if(page<=0) {
 				page=1;
 				jArray = customer.transactionHistory(accountNumber, 10,page);
@@ -659,34 +685,40 @@ public class ControllServlet extends HttpServlet {
 	protected void addCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		JSONObject json=new JSONObject();
 		try {
-			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
+			//UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
 			UtilityHelper.put(json,"Name",request.getParameter("name"));
 			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
 			UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
 			UtilityHelper.put(json,"UserType","customer");
-
+			long id= employee.addUsers(json);
 			JSONObject json2=new JSONObject();
-			UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json2,"Id",id);
 			UtilityHelper.put(json2,"AadharNumber",Long.parseLong(request.getParameter("aadhar")));
 			UtilityHelper.put(json2,"PanNumber",request.getParameter("pan"));
 			UtilityHelper.put(json2,"Address",request.getParameter("address"));
-
-			employee.addUsers(json);
 			employee.addCustomers(json2);
 			request.setAttribute("successMessage", "Customer Added ");
-		} catch (BankException | InputDefectException e) {
+			JSONObject profile = customer.viewProfile(id);
+			request.setAttribute("profile", profile);
+			request.getRequestDispatcher("/WEB-INF/employee/customerAddConfo.jsp").forward(request, response);
+		} catch (BankException | InputDefectException  e) {
 			request.setAttribute("errorMessage", e.getMessage());
+			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);
 		}
-		finally {
-			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);;
-
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Number");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			request.setAttribute("errorMessage", "Something Went Wrong");
+			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);
 		}
 	}
 
 	protected void addAccountGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			if( request.getSession().getAttribute("auth").equals("employee")) {
-				request.setAttribute("branchId",employee.getBranchId((long) request.getAttribute("empId")));  //TODO	
+				request.setAttribute("branchId",employee.getBranchId((long) request.getSession().getAttribute("empId")));  //TODO	
 			}
 			else if (request.getSession().getAttribute("auth").equals("admin")) {
 				request.setAttribute("allBranch",admin.getAllBranchId());
@@ -702,19 +734,20 @@ public class ControllServlet extends HttpServlet {
 	protected void addAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		JSONObject json=new JSONObject();
 		try {
-			UtilityHelper.put(json,"AccountNumber",Long.parseLong(request.getParameter("accountNumber")));
+			//UtilityHelper.put(json,"AccountNumber",Long.parseLong(request.getParameter("accountNumber")));
 			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("userId")));
 			UtilityHelper.put(json,"BranchId",Integer.parseInt(request.getParameter("branchId")));
 			UtilityHelper.put(json,"Balance",Long.parseLong(request.getParameter("balance")));
 			UtilityHelper.put(json,"Status","active");	
 			admin.validateBranchId(Integer.parseInt(request.getParameter("branchId")));
-			employee.createAccount(json);
-			request.setAttribute("successMessage", "Account created successfully");
+			long AccountNumber= employee.createAccount(json);
+			request.setAttribute("successMessage", "Account "+AccountNumber+" created successfully");
 		} catch (BankException | InputDefectException e) {
 			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
-		}
-		finally {
+		} catch (NumberFormatException e) {
+			request.setAttribute("errorMessage","Invalid Number");
+		} finally {
 			addAccountGet(request, response);
 		}
 	}
@@ -735,10 +768,14 @@ public class ControllServlet extends HttpServlet {
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
+					catch (NumberFormatException e) {
+						request.setAttribute("errorMessage","Invalid Account Number");
+					}
 					finally {
 						request.setAttribute("function","activate");
 						request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
 					}
+					
 					break;
 				case "inactivate" : 
 					try {
@@ -747,6 +784,8 @@ public class ControllServlet extends HttpServlet {
 						request.setAttribute("successMessage", "Account Deactivated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
+					}catch (NumberFormatException e) {
+						request.setAttribute("errorMessage","Invalid Account Number");
 					}
 					finally {
 						request.setAttribute("function","inactivate");
@@ -760,6 +799,8 @@ public class ControllServlet extends HttpServlet {
 						request.setAttribute("successMessage", "Account deleted");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
+					}catch (NumberFormatException e) {
+						request.setAttribute("errorMessage","Invalid Account Number");
 					}
 					finally {
 						request.setAttribute("function","delete");
@@ -776,6 +817,7 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("function",function);
 			request.getRequestDispatcher("/WEB-INF/employee/accountStatus.jsp").forward(request, response);
 		}
+		
 	}
 
 	protected void customerStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -794,6 +836,9 @@ public class ControllServlet extends HttpServlet {
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
 					}
+					catch (NumberFormatException e) {
+						request.setAttribute("errorMessage","Invalid Id");
+					}
 					finally {
 						request.setAttribute("function","activate");
 						request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
@@ -806,6 +851,9 @@ public class ControllServlet extends HttpServlet {
 						request.setAttribute("successMessage", "Customer Deactivated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
+					}
+					catch (NumberFormatException e) {
+						request.setAttribute("errorMessage","Invalid Id");
 					}
 					finally {
 						request.setAttribute("function","inactivate");
@@ -822,18 +870,24 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("function",function);
 			request.getRequestDispatcher("/WEB-INF/employee/customerStatus.jsp").forward(request, response);
 		}
+		
 	}
 
 
 
 	protected void bridge(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		long id =Long.parseLong(request.getParameter("id"));
-		request.getSession().setAttribute("id",id);
+		
 		try {
+			long id =Long.parseLong(request.getParameter("id"));
+			request.getSession().setAttribute("id",id);
 			employee.checkIdCustomerPresence(id);
 			customerDetail(request, response);
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
+			request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
+		}
+		catch (NumberFormatException e) {
+			request.setAttribute("errorMessage", "Invalid Number");
 			request.getRequestDispatcher("/WEB-INF/employee/bridge.jsp").forward(request, response);
 		}
 	}
@@ -841,8 +895,9 @@ public class ControllServlet extends HttpServlet {
 	//	admin
 	protected void adminDetail(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		long id = (long) request.getSession().getAttribute("id");
+		
 		try {
+			long id = (long) request.getSession().getAttribute("id");
 			HttpSession session = request.getSession();
 			session.setAttribute("auth", "admin");
 			JSONObject branchId = employee.getBranchId(id);
@@ -854,6 +909,7 @@ public class ControllServlet extends HttpServlet {
 			request.setAttribute("errorMessage", e.getMessage());
 			login(request, response);
 		}
+		
 	}
 
 	protected void adminDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -880,47 +936,72 @@ public class ControllServlet extends HttpServlet {
 		}
 	}
 
-
-	protected void addAuthority(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+	protected void getAddAuthority(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		try {
+			JSONArray jsonArray= admin.getAllBranchId();
+			request.setAttribute("allBranch", jsonArray);
+		}
+		catch ( BankException e) {
+			
+			request.setAttribute("errorMessage", e.getMessage());
+		}
+		finally {
+			
+			request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
+		}
+	}
+	
+	protected void addAuthority(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+		JSONArray jArray=new JSONArray();
+		try {
+			jArray=admin.getAllBranchId();
 			JSONObject json=new JSONObject();
 			String type=request.getParameter("type");
 			if(!(type.equals("admin")||type.equals("employee"))) {
 				throw new BankException("Invalid authority");
 			}
-			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
+			//UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("id")));
 			UtilityHelper.put(json,"Name",request.getParameter("name"));
 			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
 			UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
 			UtilityHelper.put(json,"UserType",type);
-			admin.addUsers(json);
+			long id= admin.addUsers(json);
 
 			JSONObject json2= new JSONObject();
-			UtilityHelper.put(json2,"Id",Long.parseLong(request.getParameter("id")));
+			UtilityHelper.put(json2,"Id",id);
 			UtilityHelper.put(json2,"BranchId",request.getParameter("branchId") );
 			UtilityHelper.put(json2,"Type",type);
 			admin.addEmployee(json2);
-			request.setAttribute("successMessage", type+" Added Successfully");
+			JSONObject profile = customer.viewProfile(id);
+			request.setAttribute("profile", profile);
+			request.setAttribute("allBranch",admin.getAllBranchId());
+			request.getRequestDispatcher("/WEB-INF/admin/addEmpConfo.jsp").forward(request, response);
 		}
 		catch (BankException | InputDefectException e) {
 			e.printStackTrace();
+			request.setAttribute("allBranch",jArray);
 			request.setAttribute("errorMessage", e.getMessage());
-		}
-		finally {
 			request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
 		}
+		catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("errorMessage","Something went wrong");
+			request.getRequestDispatcher("/WEB-INF/admin/addEmployee.jsp").forward(request, response);
+		}
+		
 	}
 
 	protected void addBranch(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		try {
 			JSONObject json= new JSONObject();
-			int branchId=Integer.parseInt(request.getParameter("branchId"));
-			UtilityHelper.put(json,"BranchId",branchId);
-			UtilityHelper.put(json,"IfscCode","rey"+String.format("%05d",branchId) );
+			//int branchId=Integer.parseInt(request.getParameter("branchId"));
+			//UtilityHelper.put(json,"BranchId",branchId);
+			//UtilityHelper.put(json,"IfscCode","rey"+String.format("%05d",branchId) );
+			UtilityHelper.put(json,"IfscCode","rey00000");
 			UtilityHelper.put(json,"BranchName",request.getParameter("branchName"));
 			UtilityHelper.put(json,"Address",request.getParameter("address"));
-			admin.createBranch(json);
-			request.setAttribute("successMessage","Branch Added");
+			long branchId= admin.createBranch(json);
+			request.setAttribute("successMessage","Branch Id "+branchId+" Created");
 		}
 		catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());
@@ -933,8 +1014,8 @@ public class ControllServlet extends HttpServlet {
 	protected void employeeStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String status=(String) request.getParameter("status");
 		String password=request.getParameter("password");
-		long empId=(long) request.getSession().getAttribute("empId");
 		try {
+			long empId=(long) request.getSession().getAttribute("empId");
 			boolean access = auth.checkPassword(empId, password);
 			if (access) {
 				switch (status) {
@@ -945,6 +1026,8 @@ public class ControllServlet extends HttpServlet {
 						request.setAttribute("successMessage", "Employee Activated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
+					}catch (NumberFormatException e) {
+						request.setAttribute("errorMessage", "Invalid Id");
 					}
 					finally {
 						request.setAttribute("function","activate");
@@ -958,6 +1041,8 @@ public class ControllServlet extends HttpServlet {
 						request.setAttribute("successMessage", "Employee Deactivated");
 					}catch (BankException | InputDefectException e) {
 						request.setAttribute("errorMessage", e.getMessage());
+					}catch (NumberFormatException e) {
+						request.setAttribute("errorMessage", "Invalid Id");
 					}
 					finally {
 						request.setAttribute("function","inactivate");

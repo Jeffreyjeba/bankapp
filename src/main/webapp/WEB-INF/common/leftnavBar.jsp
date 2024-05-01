@@ -4,7 +4,7 @@
 <div class="leftNavBar">
   <%--   <a href="<%=request.getContextPath()%>/page/viewBalance">Balance</a>
     <br> --%>
-    <a href="<%=request.getContextPath()%>/page/accountInfo">My Account</a>
+    <a href="<%=request.getContextPath()%>/page/accountInfo">Accounts</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/debit">Debit</a>
     <br>
@@ -12,14 +12,16 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/moneyTransfer">Money Transfer</a>
     <br>
-    <a href="<%=request.getContextPath()%>/page/transactionHistory">TransactionHistory</a>
+    <a href="<%=request.getContextPath()%>/page/transactionHistory">Transaction History</a>
     <br>
-    <a href="<%=request.getContextPath()%>/page/changeAccount">Change Account</a>
-    <br>
+   <%--  <a href="<%=request.getContextPath()%>/page/changeAccount">Change Account</a>
+    <br> --%>
     <a href="<%=request.getContextPath()%>/page/primaryAccount">Primary Account</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/profile">Profile</a>
     <br>
+    <%if(request.getSession().getAttribute("auth").equals("customer")){ %>
     <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
     <br>
+    <%} %>
 </div>

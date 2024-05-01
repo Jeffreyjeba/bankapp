@@ -11,7 +11,9 @@ import utility.InputDefectException;
 public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	
 	
-	public void addUsers(Users user) throws BankException;
+	public long addUsers(Users user) throws BankException;
+	
+	//public long addUsersAutogen(Users user) throws BankException;
 	
 	public void alterUsers(Users user) throws BankException;
 	
@@ -19,7 +21,7 @@ public interface EmployeeServiceInterface extends CustomerServiceInterface {
 
 	public void addCustomers(Customers customer) throws BankException;
 
-	public void createAccount(Accounts account) throws BankException;
+	public long createAccount(Accounts account) throws BankException;
 
 	public void deleteAccount(long accountNumber) throws BankException;
 
@@ -44,5 +46,7 @@ public interface EmployeeServiceInterface extends CustomerServiceInterface {
 	public long totalAccounts(long bankId) throws BankException, InputDefectException ;
 	
 	public void checkBranchPrecence(long value , String field) throws BankException, InputDefectException ;
+	
+	public JSONObject getUserStatus(long id)throws BankException ;
 	
 }

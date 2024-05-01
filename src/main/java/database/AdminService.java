@@ -20,8 +20,12 @@ public class AdminService extends EmployeeService implements AdminServiceInterfa
 		return BillpoughAdmin.adminService;
 	}
 
-	public void createBranch(Branch branch) throws BankException  {
-		generalAdd("branch", branch);
+	public long createBranch(Branch branch) throws BankException  {
+		long branchId= generalAddAutogen("branch", branch);
+		String ifscCode = "rey"+String.format("%05d",branchId);
+		StringBuilder queryBuilder=builder.singleSetWhere("branch","IfscCode","BranchID");
+		update(queryBuilder,ifscCode,branchId);
+		return branchId;
 	}
 	
 	public void addAdmin(Employees admin) throws BankException  {
@@ -53,7 +57,5 @@ public class AdminService extends EmployeeService implements AdminServiceInterfa
 	public void checkEmployeePrecence(long value, String field) throws BankException, InputDefectException {
 		checkLongPresence(value, "employees", field, field);
 	}
-	
-	
 	
 }

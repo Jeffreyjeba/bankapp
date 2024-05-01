@@ -21,7 +21,7 @@
                 <div class="transaction" id="moneyTransfer">
 		                <table>
 		                	<tr><th><h3>ADD CUSTOMER</h3></th></tr>
-		                    <tr><td><input name="id" type="number" min="1" step="1" max="999999" placeholder="Id" required></td></tr>
+		                    <!-- <tr><td><input name="id" type="number" min="1" step="1" max="999999" placeholder="Id" required></td></tr> -->
 		                    <tr><td><input name="name" maxlength="25" title="no special characters" type="text" pattern="[a-zA-Z]*" placeholder="Name" required></td></tr>
 		                    <tr><td><input name="emailId" maxlength="25" type="email"placeholder="EmailId" required></td></tr>
 		                    <tr><td><input name="phoneNumber" maxlength="10" title="enter a valid phone Number" type="text"placeholder="Phone Number" pattern="^[7-9]{1}[0-9]{9}$" required></td></tr>

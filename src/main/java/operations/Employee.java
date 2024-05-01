@@ -22,16 +22,18 @@ public class Employee extends Customer{
 
 	EmployeeServiceInterface employee=ServiceFactory.getEmployeeService();
 
-	public void addUsers(JSONObject userJson) throws BankException,InputDefectException{
+	public long addUsers(JSONObject userJson) throws BankException,InputDefectException{
 		UtilityHelper.nullCheck(userJson);
 		Users user=josnToUsers(userJson);
 		validateUsers(userJson);
-		checkIdUserAbsence(user.getId());
+		//checkIdUserAbsence(user.getId());
 		setTime();
-		Authenticator.user.get().setActiveId(UtilityHelper.getLong(userJson,"Id"));
 		setCreationDetails(user);
-		employee.addUsers(user);
+		long id= employee.addUsers(user);
+		Authenticator.user.get().setActiveId(id);
+		user.setId(id);
 		LogAgent.log("-",OperationType.addUser);
+		return id;
 	}
 
 	public void alterUsers(JSONObject userJson) throws BankException,InputDefectException{
@@ -63,18 +65,19 @@ public class Employee extends Customer{
 		employee.addCustomers(customer);
 		LogAgent.log("-",OperationType.addCustomer);
 	}
-	public void createAccount(JSONObject accountJson) throws BankException,InputDefectException {
+	public long createAccount(JSONObject accountJson) throws BankException,InputDefectException {
 		UtilityHelper.nullCheck(accountJson);
 		Accounts account=jsonToAccounts(accountJson);
 		validateAccounts(accountJson);
 		branchIdPresence(account.getBranchId());
-		checkAccNoForAbsence(account.getAccountNumber());
+		//checkAccNoForAbsence(account.getAccountNumber());
 		checkIdCustomerPresence(account.getId());
 		setTime();
 		Authenticator.user.get().setActiveId(UtilityHelper.getLong(accountJson,"Id"));
 		setCreationDetails(account);
-		employee.createAccount(account);
+		long accountNumber= employee.createAccount(account);
 		LogAgent.log("-",OperationType.addAccount);
+		return accountNumber;
 	}
 	public void deleteAccount(long accountNumber) throws BankException,InputDefectException {
 		Validation.validateAccountNumber(accountNumber);
@@ -89,6 +92,7 @@ public class Employee extends Customer{
 		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		findDeleted(accountNumber);
+		findInactive(accountNumber);
 		setTime();
 		setUserForAccounts(accountNumber);
 		employee.deactivateAccount(accountNumber);
@@ -98,6 +102,7 @@ public class Employee extends Customer{
 		Validation.validateAccountNumber(accountNumber);
 		checkAccNoForPresence(accountNumber);
 		findDeleted(accountNumber);
+		findActive(accountNumber);
 		setTime();
 		setUserForAccounts(accountNumber);
 		employee.activateAccount(accountNumber);
@@ -113,6 +118,7 @@ public class Employee extends Customer{
 	public void activateCustomer(long id) throws BankException, InputDefectException {
 		Validation.validateUserId(id);
 		checkIdCustomerPresence(id);
+		checkUserActive(id);
 		setTime();
 		Authenticator.user.get().setActiveId(id);
 		employee.activateCustomer(id);
@@ -122,6 +128,7 @@ public class Employee extends Customer{
 	public void deactivateCustomer(long id) throws BankException, InputDefectException {
 		Validation.validateUserId(id);
 		checkIdCustomerPresence(id);
+		checkUserInactive(id);
 		setTime();
 		Authenticator.user.get().setActiveId(id);
 		employee.deactivateCustomer(id);
@@ -150,7 +157,7 @@ public class Employee extends Customer{
 	protected Users josnToUsers(JSONObject userPojo) throws BankException, InputDefectException {
 		Users users=new Users();
 		users.setEmailId(UtilityHelper.getString(userPojo,"EmailId"));
-		users.setId(UtilityHelper.getLong(userPojo,"Id"));
+		//users.setId(UtilityHelper.getLong(userPojo,"Id"));
 		users.setName(UtilityHelper.getString(userPojo,"Name"));
 		users.setPhoneNumber(UtilityHelper.getLong(userPojo,"PhoneNumber"));
 		users.setUserType(UserHirarchy.valueOf(UtilityHelper.getString(userPojo,"UserType")));
@@ -168,7 +175,7 @@ public class Employee extends Customer{
 
 	protected Accounts jsonToAccounts(JSONObject accountPojo) throws BankException, InputDefectException {
 		Accounts accounts=new Accounts();
-		accounts.setAccountNumber(UtilityHelper.getLong(accountPojo,"AccountNumber"));
+		//accounts.setAccountNumber(UtilityHelper.getLong(accountPojo,"AccountNumber"));
 		accounts.setBalance(UtilityHelper.getLong(accountPojo,"Balance"));
 		accounts.setBranchId(UtilityHelper.getInt(accountPojo,"BranchId"));
 		accounts.setId(UtilityHelper.getLong(accountPojo,"Id"));
@@ -176,7 +183,7 @@ public class Employee extends Customer{
 	}
 
 	protected void validateUsers(JSONObject json) throws BankException, InputDefectException {
-		Validation.validateUserId(UtilityHelper.getLong(json,"Id"));
+		//Validation.validateUserId(UtilityHelper.getLong(json,"Id"));
 		Validation.name(UtilityHelper.getString(json,"Name"));
 	
 		if(!Validation.validateEmail(UtilityHelper.getString(json,"EmailId"))) {
@@ -201,7 +208,7 @@ public class Employee extends Customer{
 	}
 
 	protected void validateAccounts(JSONObject json) throws InputDefectException, BankException {
-		Validation.validateAccountNumber(UtilityHelper.getLong(json,"AccountNumber"));
+		//Validation.validateAccountNumber(UtilityHelper.getLong(json,"AccountNumber"));
 		Validation.validateAmount(UtilityHelper.getLong(json,"Balance"));
 		Validation.validateUserId(UtilityHelper.getLong(json,"Id"));
 	}
@@ -220,8 +227,37 @@ public class Employee extends Customer{
 			throw new BankException("account Deleted");
 		}
 	}
+	
+	protected void findActive(long AccountNumber) throws BankException, InputDefectException {
+		String status= accountStatus(AccountNumber);
+		if(status.equals("active")) {
+			throw new BankException("Account active");
+		}
+	}
+	
+	protected void findInactive(long AccountNumber) throws BankException, InputDefectException {
+		String status= accountStatus(AccountNumber);
+		if(status.equals("inactive")) {
+			throw new BankException("Account Inactive");
+		}
+	}
+	
+	protected String UserStatus(long id) throws BankException, InputDefectException {
+		JSONObject json= employee.getUserStatus(id);
+		return UtilityHelper.getString(json,"Status");
+	}
 
-
+	protected void checkUserActive(long id) throws BankException, InputDefectException {
+		if(UserStatus(id).equals("active")) {
+			throw new BankException("User Active");
+		}
+	}
+	
+	protected void checkUserInactive(long id) throws BankException, InputDefectException {
+		if(UserStatus(id).equals("inactive")) {
+			throw new BankException("User Inactive");
+		}
+	}
 
 	protected void setCreationDetails(LogMethods bank) {
 		UserData userData=Authenticator.user.get();

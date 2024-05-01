@@ -21,11 +21,11 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 	
 	public static EmployeeService getEmployeeService() {
 		return BillpoughEmployee.employeeService;
-	}
-
-	public void addUsers(Users user) throws BankException {
+	}	 
+	
+	public long addUsers(Users user) throws BankException {
 		String tableName = "users";
-		generalAdd(tableName, user);
+		return generalAddAutogen(tableName, user);
 	}
 
 	public void addCustomers(Customers customer) throws BankException {
@@ -33,9 +33,10 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 		generalAdd(tableName, customer);
 	}
 
-	public void createAccount(Accounts account) throws BankException {
+	public long createAccount(Accounts account) throws BankException {
 		String tableName = "accounts";
-		generalAdd(tableName, account);
+		long id= generalAddAutogen(tableName, account);
+		return id;
 	}
 
 	public void deleteAccount(long accountNumber) throws BankException {
@@ -114,5 +115,11 @@ public class EmployeeService extends CustomerService implements EmployeeServiceI
 	
 	public void checkBranchPrecence(long value, String field) throws BankException, InputDefectException {
 		checkLongPresence(value, "branch", field, field);
+	}
+	
+	@Override
+	public JSONObject getUserStatus(long id) throws BankException {
+		StringBuilder query= builder.selectFromWhere("users","Id=" +id,"Status");
+		return select(query);
 	}
 }

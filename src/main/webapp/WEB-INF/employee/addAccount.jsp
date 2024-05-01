@@ -22,11 +22,10 @@
 				<div class="transaction" id="moneyTransfer">
 				<table>
 					<tr><th><h3>ADD ACCOUNT</h3></th></tr>
-					<tr><td><input min="1" step="1" max="999999" name="userId" type="number" placeholder="User Id" required></tr></td>
-					<tr><td><input  min="1" step="1" max="999999" name="accountNumber" type="number" placeholder="New Account Number" required></tr></td>
+					<tr><td><input min="1" step="1" max="999999" name="userId" type="number" placeholder="User Id" required></td></tr>
+					<!-- <tr><td><input  min="1" step="1" max="999999" name="accountNumber" type="number" placeholder="New Account Number" required></tr></td> -->
 					<%if(request.getSession().getAttribute("auth").equals("employee")){ 
 					int branchId=(int) request.getSession().getAttribute("branchId");%>
-
 					<input name="branchId" type="hidden" value=<%=branchId %>>
 					<%}else if(request.getSession().getAttribute("auth").equals("admin")){	
 					 	JSONArray allBranch= (JSONArray)request.getAttribute("allBranch");

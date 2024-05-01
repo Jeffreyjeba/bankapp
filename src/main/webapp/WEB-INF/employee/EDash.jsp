@@ -7,7 +7,7 @@
 <html>
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REYBANK DEBIT</title>
+    <title>REYBANK DASHBOARD</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/css/commoncss.css">
 </head>
 <body>
@@ -27,10 +27,15 @@
 	 <div class="content">
         <div class="profile">
             <table>
+            <%if(request.getSession().getAttribute("auth").equals("employee")){
+			 
+			%>
+            
                 <tr>
                     <td>Branch Id</td>
                     <td><%=branch.getInt("BranchId")%></td>
-                </tr>
+                </tr> 
+                <%} %>
                 <tr>
                     <td>Ifsc Code</td>
                     <td><%=branch.getString("IfscCode")%></td>
@@ -56,11 +61,15 @@
                         <select name="branchId" onChange="this.form.submit()">
                         <% 
                         int length=allBranch.length();
-                        for(int temp=0;length>temp;temp++){
-                        int temp2=allBranch.getJSONObject(temp).getInt("BranchId");%>
+                        int currentBranch= branch.getInt("BranchId");%>
+                        <option><%=currentBranch %></option>
+                        <%for(int temp=0;length>temp;temp++){
+                        int temp2=allBranch.getJSONObject(temp).getInt("BranchId");
+                         if(currentBranch!=temp2){%>
                         			
                             <option><%=temp2%></option>
-                            <%} %> 
+                            <%}
+                         } %> 
                         </select>
                     </td>
                     </form>

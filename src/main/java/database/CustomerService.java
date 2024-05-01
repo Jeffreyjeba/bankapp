@@ -8,7 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bank.Priority;
-import pojo.Accounts;
 import pojo.BankMarker;
 import pojo.LogData;
 import pojo.TransactionHistory;
@@ -37,7 +36,7 @@ public class CustomerService extends DataStorageService implements CustomerServi
 	}
 
 	public JSONArray getAccounts(long id) throws BankException {
-		StringBuilder query = builder.selectFromWhere("accounts", "Id=" + id, "AccountNumber");
+		StringBuilder query = builder.selectFromWhere("accounts", "Id=" + id +" and Status= 'active' " , "AccountNumber");
 		return bulkSelect(query);
 	}
 
@@ -212,6 +211,11 @@ public class CustomerService extends DataStorageService implements CustomerServi
 		StringBuilder query = builder.pojoToAddQuery(tableName, data);
 		add(query, data);
 	}
+	
+	protected long generalAddAutogen(String tableName, BankMarker data) throws BankException {
+		StringBuilder query = builder.pojoToAddQuery(tableName, data);
+		return addWithAutogen(query, data);
+	}
 
 	protected JSONObject selectWhere(String tableName, String condition, String target) throws BankException {
 		StringBuilder query = builder.selectFromWhere(tableName, condition, target);
@@ -261,5 +265,6 @@ public class CustomerService extends DataStorageService implements CustomerServi
 		StringBuilder logQuery= builder.pojoToAddQuery("auditlog",logData);
 		add(logQuery, logData);
 	}
+
 
 }

@@ -61,4 +61,7 @@ public interface CustomerServiceInterface {
 	public long userForAccountNumber(long accountNumber) throws BankException, InputDefectException ;
 	
 	public void logActivity(LogData logData) throws BankException, InputDefectException ;
+	
+	
+
 }

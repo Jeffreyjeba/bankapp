@@ -30,6 +30,7 @@ public class SessionFilter implements Filter {
 		HttpServletRequest req= (HttpServletRequest) request;
 		String path= req.getPathInfo();
 		System.out.println(path);
+		//System.out.print(false);
 		if(!(path.equals("/LoginAuthendicate") || path.equals("/login")) ) {
 			HttpSession session =req.getSession(false);
 			System.out.println(session);

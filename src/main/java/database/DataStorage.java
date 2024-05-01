@@ -13,5 +13,6 @@ public interface DataStorage {
 	public JSONArray bulkSelect(CharSequence seq) throws BankException;
 	public JSONObject select(CharSequence seq)throws BankException;
 	public boolean update(CharSequence seq,Object...input) throws BankException;
-	public boolean delete(CharSequence seq,Object...input) throws BankException; 
+	public boolean delete(CharSequence seq,Object...input) throws BankException;
+	public long addWithAutogen(CharSequence seq, BankMarker input) throws BankException; 
 }

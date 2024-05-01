@@ -5,7 +5,7 @@
 
 
 <div class="leftNavBar" id="2">
-    <a href="<%=request.getContextPath()%>/page/addCustomer">AddCustomer</a>
+    <a href="<%=request.getContextPath()%>/page/addCustomer">Add Customer</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/addAccount">Add Account</a>
     <br>
@@ -19,16 +19,16 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/deactivateCustomer">Deactivate Customer</a>
     <br>
-    <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
+  <%--   <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
     <!-- Eprofile -->
-    <br>
-  <%--   <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
     <br> --%>
+    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
+    <br>
 </div>
 
 <%} else if(request.getSession().getAttribute("auth").equals("admin")){ %>
-<div class="leftNavBar" id="2">
-    <a href="<%=request.getContextPath()%>/page/addCustomer">AddCustomer</a>
+<div class="leftNavBar2" id="2">
+    <a href="<%=request.getContextPath()%>/page/addCustomer">Add Customer</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/addAccount">Add Account</a>
     <br>
@@ -42,14 +42,17 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/deactivateCustomer">Deactivate Customer</a>
     <br>
-    <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
-    <br>
+   <%--  <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
+    <br> --%>
     <a href="<%=request.getContextPath()%>/page/addAuthority">Add Authority</a>
     <br>
     <a href="<%=request.getContextPath()%>/page/addBranch">Add Branch</a>
     <br>
+    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
+    <br>
     <a href="<%=request.getContextPath()%>/page/manageEmployee">Manage Employee</a>
     <br>
+    
     
 </div>
 

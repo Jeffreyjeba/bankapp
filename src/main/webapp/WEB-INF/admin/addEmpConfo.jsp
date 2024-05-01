@@ -8,19 +8,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REYBANK PROFILE</title>
+    <title>REYBANK USER CONFO</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/css/commoncss.css">
 </head>
 <body>
-
-    
     
     <%
 	JSONObject profile=(JSONObject) request.getAttribute("profile");	
 	%>
 
 	<jsp:include page="/WEB-INF/common/commonHeader.jsp" />
-     <jsp:include page="/WEB-INF/common/leftnavBar.jsp" />
+    <jsp:include page="/WEB-INF/common/EleftnavBar.jsp" />
 
 
     <div class="content">
@@ -42,13 +40,6 @@
                     <td>EmailId</td>
                     <td><%=profile.getString("EmailId")%></td>
                 </tr>
-                <tr>
-                    <td>Address</td>
-                    <td><%=profile.getString("Address")%></td>
-                </tr>
-                <%-- <tr>
-                	<td> <jsp:include page="/WEB-INF/common/error.jsp" /></td>
-                </tr> --%>
             </table>
         </div>
     </div>

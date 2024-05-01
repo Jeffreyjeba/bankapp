@@ -10,8 +10,8 @@ public interface AdminServiceInterface extends EmployeeServiceInterface{
 	
 	// ADMIN operations
 	
-	public void createBranch(Branch branch) throws BankException;
-
+	public long createBranch(Branch branch) throws BankException;
+	
 	public void addAdmin(Employees admin) throws BankException;
 
 	public void addEmployee(Employees employee) throws BankException;
@@ -27,5 +27,6 @@ public interface AdminServiceInterface extends EmployeeServiceInterface{
 	public void checkEmployeeAbsence(long value , String field) throws BankException, InputDefectException ;
 
 	public void checkEmployeePrecence(long value , String field) throws BankException, InputDefectException ;
+	
 
 }

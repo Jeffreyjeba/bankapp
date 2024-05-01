@@ -17,16 +17,15 @@ public class Admin extends Employee {
 
 	AdminServiceInterface admin = ServiceFactory.getAdminService();
 
-	public void createBranch(JSONObject branchJson) throws BankException, InputDefectException {
+	public long createBranch(JSONObject branchJson) throws BankException, InputDefectException {
 		UtilityHelper.nullCheck(branchJson);
 		Branch branch=jsonToBranch(branchJson);
 		validateCreateBranch(branch);
-		long branchId = branch.getBranchId();
-		checkBranchIdAbsence(branchId);
 		setTime();
 		setCreationDetails(branch);
-		admin.createBranch(branch);
+		long id= admin.createBranch(branch);
 		LogAgent.log("-",OperationType.createBranch);
+		return id;
 	}
 
 	public void addAdmin(JSONObject admin) throws BankException, InputDefectException {
@@ -59,6 +58,7 @@ public class Admin extends Employee {
 	public void activateEmployee(long id) throws BankException, InputDefectException {
 		Validation.validateUserId(id);
 		checkForWorkersPresence(id);
+		checkEmpActive(id);
 		setTime();
 		admin.activateCustomer(id);
 		LogAgent.log("-",OperationType.activateEmployee);
@@ -67,6 +67,7 @@ public class Admin extends Employee {
 	public void inactivateEmployee(long id) throws BankException, InputDefectException {
 		Validation.validateUserId(id);
 		checkForWorkersPresence(id);
+		checkEmpInactive(id);
 		setTime();
 		admin.deactivateCustomer(id);
 		LogAgent.log("-",OperationType.deactivateEmployee);
@@ -106,7 +107,8 @@ public class Admin extends Employee {
 	protected void checkForWorkersPresence(long employeeId) throws BankException, InputDefectException {
 		admin.checkEmployeePrecence(employeeId, "Id");
 	}
-
+	
+	
 	private Employees jsonToEmployee(JSONObject employeeJson) throws BankException, InputDefectException {
 		Employees employees = new Employees();
 		employees.setBranchId(UtilityHelper.getInt(employeeJson, "BranchId"));
@@ -118,7 +120,7 @@ public class Admin extends Employee {
 	protected Branch jsonToBranch(JSONObject branchJson) throws BankException, InputDefectException {
 		Branch branch = new Branch();
 		branch.setAddress(UtilityHelper.getString(branchJson, "Address"));
-		branch.setBranchId(UtilityHelper.getInt(branchJson, "BranchId"));
+		//branch.setBranchId(UtilityHelper.getInt(branchJson, "BranchId"));
 		branch.setBranchName(UtilityHelper.getString(branchJson, "BranchName"));
 		branch.setIfscCode(UtilityHelper.getString(branchJson, "IfscCode"));
 		return branch;
@@ -132,8 +134,21 @@ public class Admin extends Employee {
 	
 	private void validateCreateBranch(Branch branch) throws BankException {
 		Validation.address(branch.getAddress());
-		Validation.validateUserId(branch.getBranchId());
 		Validation.branchName(branch.getBranchName());
 		Validation.validateIfsc(branch.getIfscCode());
+	}
+	
+	private void checkEmpActive(long id) throws BankException, InputDefectException  {
+		String statu= UserStatus(id);
+		if(statu.equals("active")) {
+			throw new BankException("Employee Active");
+		}
+	}
+	
+	private void checkEmpInactive(long id) throws BankException, InputDefectException  {
+		String statu= UserStatus(id);
+		if(statu.equals("inactive")) {
+			throw new BankException("Employee Inactive");
+		}
 	}
 }

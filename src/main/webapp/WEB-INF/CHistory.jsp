@@ -24,9 +24,10 @@
     JSONArray jArray=(JSONArray) request.getAttribute("jArray");
     ZoneId zId= ZoneId.systemDefault();
     DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    int curretPage=(int) request.getAttribute("currentPage");
+    int currentPage=(int) request.getAttribute("currentPage");
     HttpSession customerSession=request.getSession();
-	long currentAccount= (long)customerSession.getAttribute("currentAccount");
+	long currentAccount= (long) customerSession.getAttribute("currentAccount");
+	int maxPages=(int) request.getAttribute("maxPage");
     %>
 
 
@@ -116,15 +117,19 @@
 		</table>
 	</div>
 		<div class="pagination">
+		<%if(currentPage>1){ %>
 			<form action="previousPage" method="post">
-				<input name="page" type="hidden" value=<%=curretPage%>>
+				<input name="page" type="hidden" value=<%=currentPage%>>
 				<button type="submit"><</button>
 			</form>
-			<button><%=curretPage %></button>
+			<%} %>
+			<button><%=currentPage %></button>
+		<%if(currentPage < maxPages){%>
 			<form action="nextPage" method="post">
-				<input name="page" type="hidden" value=<%=curretPage%>>
+				<input name="page" type="hidden" value=<%=currentPage%>>
 				<button type="submit">></button>
 			</form>
+			<%} %>
 		</div>
 		
 		

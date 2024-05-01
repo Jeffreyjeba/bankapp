@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REYBANK ACTIVATE ACCOUNT</title>
+    <title>REYBANK ACCOUNT</title>
    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/commoncss.css">
 </head>
 <body>

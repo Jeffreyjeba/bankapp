@@ -46,6 +46,28 @@ abstract public class DataStorageService implements DataStorage {
 		}
 	}
 	
+	
+	@Override
+	public long addWithAutogen(CharSequence seq, BankMarker input) throws BankException {
+		try(Connection connection = getConnection();) {
+			try (PreparedStatement preparedStatement = connection.prepareStatement(seq.toString(),Statement.RETURN_GENERATED_KEYS);) {
+				setParameter(preparedStatement, input);
+				 if(preparedStatement.executeUpdate()>0) {
+					 try( ResultSet resultSet= preparedStatement.getGeneratedKeys();){
+						 if(resultSet.next()) {
+							 return resultSet.getLong(1);  
+						 }
+					 }
+				 }
+			}	
+		}
+		catch (SQLException e) {
+			throw new BankException("technical error accured contact bank or technical support",e);
+		}
+		return-100;
+		
+	}
+	
 	@Override
 	public boolean bulkAdd(CharSequence seq, BankMarker input) throws BankException{
 		
