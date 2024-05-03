@@ -15,6 +15,21 @@
 	<%
 	 }
 	%>
+	<%
+	String errorMessageResponse=(String) request.getParameter("errorMessage");
+	
+	if(!(errorMessageResponse==null  ||errorMessageResponse.equals("null"))){
+	%>
+	<div id="timedMessage" style="color:red"><%=errorMessageResponse %></div>
+	<%}
+	 String successMessageResponse=(String) request.getParameter("successMessage");
+	 if(!(successMessageResponse == null|| successMessageResponse.equals("null"))){
+	%>
+	<div id="timedMessage" style="color:green"><%=successMessageResponse%></div>
+	<%
+	 }
+	%>
+	
 	
 	<script>
 	setTimeout(timeout,5000);

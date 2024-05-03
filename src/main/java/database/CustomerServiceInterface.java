@@ -38,6 +38,14 @@ public interface CustomerServiceInterface {
 
 	public void checkAccountPresence(long value, String field) throws BankException, InputDefectException;
 	
+	public void checkPhoneNoAbsence(long value, String field) throws BankException, InputDefectException;
+	
+	public void checkEmailIdAbsence(String value, String field) throws BankException, InputDefectException;
+	
+	public void checkAadharAbsence(long value, String field) throws BankException, InputDefectException;
+	
+	public void checkPanAbsence(String value, String field) throws BankException, InputDefectException;
+	
 	public int pageCount(long accountNumber,int quantity,long searchMilli) throws BankException, InputDefectException ;
 	
 	public JSONObject viewProfile(long id) throws BankException, InputDefectException;

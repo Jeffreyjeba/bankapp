@@ -26,7 +26,8 @@ public class Employee extends Customer{
 		UtilityHelper.nullCheck(userJson);
 		Users user=josnToUsers(userJson);
 		validateUsers(userJson);
-		//checkIdUserAbsence(user.getId());
+		checkEmailIdForAbsence(user.getEmailId());
+		checkPhoneNoForAbsence(user.getPhoneNumber());
 		setTime();
 		setCreationDetails(user);
 		long id= employee.addUsers(user);
@@ -35,6 +36,35 @@ public class Employee extends Customer{
 		LogAgent.log("-",OperationType.addUser);
 		return id;
 	}
+	public long addUserCustomer(JSONObject userJson,JSONObject customerJson) throws InputDefectException, BankException {
+		UtilityHelper.nullCheck(userJson);
+		Users user=josnToUsers(userJson);
+		validateUsers(userJson);
+		checkEmailIdForAbsence(user.getEmailId());
+		checkPhoneNoForAbsence(user.getPhoneNumber());
+		setTime();
+		setCreationDetails(user);
+		UtilityHelper.nullCheck(customerJson);
+		validateCustomer(customerJson);
+		checkAadharForAbsence(UtilityHelper.getLong(customerJson,"AadharNumber"));
+		checkpanForAbsence(UtilityHelper.getString(customerJson,"PanNumber"));
+		long id= employee.addUsers(user); //
+		Authenticator.user.get().setActiveId(id);
+		user.setId(id);
+		LogAgent.log("-",OperationType.addUser);
+		UtilityHelper.put(customerJson,"Id",id);
+		Customers customer=josnToCustomers(customerJson);
+		long custId=customer.getId();
+		checkIdUserPresence(custId);
+		checkIdCustomerAbsence(custId);
+		setTime();
+		Authenticator.user.get().setActiveId(UtilityHelper.getLong(customerJson,"Id"));
+		setCreationDetails(customer);
+		employee.addCustomers(customer);
+		LogAgent.log("-",OperationType.addCustomer);
+		return id;
+	}
+	
 
 	public void alterUsers(JSONObject userJson) throws BankException,InputDefectException{
 		UtilityHelper.nullCheck(userJson);
@@ -59,6 +89,8 @@ public class Employee extends Customer{
 		long id=customer.getId();
 		checkIdUserPresence(id);
 		checkIdCustomerAbsence(id);
+		checkAadharForAbsence(customer.getAadharNumber());
+		checkpanForAbsence(customer.getPanNumber());
 		setTime();
 		Authenticator.user.get().setActiveId(UtilityHelper.getLong(customerJson,"Id"));
 		setCreationDetails(customer);
@@ -164,12 +196,12 @@ public class Employee extends Customer{
 		return users;
 	}
 
-	protected Customers josnToCustomers(JSONObject customerPojo) throws BankException, InputDefectException {
+	protected Customers josnToCustomers(JSONObject customerJson) throws BankException, InputDefectException {
 		Customers customer=new Customers();
-		customer.setAadharNumber(UtilityHelper.getLong(customerPojo,"AadharNumber"));
-		customer.setAddress(UtilityHelper.getString(customerPojo,"Address"));
-		customer.setId(UtilityHelper.getLong(customerPojo,"Id"));
-		customer.setPanNumber(UtilityHelper.getString(customerPojo,"PanNumber"));
+		customer.setAadharNumber(UtilityHelper.getLong(customerJson,"AadharNumber"));
+		customer.setAddress(UtilityHelper.getString(customerJson,"Address"));
+		customer.setId(UtilityHelper.getLong(customerJson,"Id"));
+		customer.setPanNumber(UtilityHelper.getString(customerJson,"PanNumber"));
 		return customer;
 	}
 
@@ -202,7 +234,7 @@ public class Employee extends Customer{
 			throw new BankException("invalid Pan Number");
 		}
 		
-		Validation.validateUserId(UtilityHelper.getLong(json,"Id"));
+		//Validation.validateUserId(UtilityHelper.getLong(json,"Id"));
 
 		Validation.address(UtilityHelper.getString(json,"Address"));
 	}

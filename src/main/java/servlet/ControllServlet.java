@@ -398,6 +398,8 @@ public class ControllServlet extends HttpServlet {
 
 	protected void credit(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String errorMessage=null;
+		String successMessage=null;
 		try {
 			HttpSession session = request.getSession();
 			long id = (long) session.getAttribute("id");
@@ -418,18 +420,25 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "Amount", amount);
 			UtilityHelper.put(json, "Description", description);
 			customer.credit(json);
-			request.setAttribute("successMessage", "Credit successfull");
+			//request.setAttribute("successMessage", "Credit successfull");
+			successMessage="Credit successfull";
 		} catch (BankException | InputDefectException e) {
-			request.setAttribute("errorMessage", e.getMessage());
+			//request.setAttribute("errorMessage", e.getMessage());
+			errorMessage=e.getMessage();
 		} catch (NumberFormatException e) {
-			request.setAttribute("errorMessage","Invalid Number");
+			//request.setAttribute("errorMessage","Invalid Number");
+			errorMessage="Invalid Number";
 		} finally {
-			request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
+			//request.getRequestDispatcher("/WEB-INF/CCredit.jsp").forward(request, response);
+			System.out.println(request.getContextPath());
+			response.sendRedirect(request.getContextPath()+"/page/credit?successMessage="+successMessage+"&errorMessage="+errorMessage);
 		}
 	}
 
 	protected void debit(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String errorMessage=null;
+		String successMessage=null;
 		try {
 			HttpSession session = request.getSession();
 			long accountNumber=Long.parseLong(request.getParameter("account"));
@@ -450,20 +459,25 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "Amount", amount);
 			UtilityHelper.put(json, "Description", description);
 			customer.debit(json);
-			request.setAttribute("successMessage", "Debit successfull");
+			//request.setAttribute("successMessage", "Debit successfull");
+			successMessage="Debit successfull";
 		} catch (BankException | InputDefectException e) {
-			e.printStackTrace();
-			request.setAttribute("errorMessage", e.getMessage());
+			//e.printStackTrace();
+			//request.setAttribute("errorMessage", e.getMessage());
+			errorMessage=e.getMessage();
 		} 
 		catch (NumberFormatException e) {
-			request.setAttribute("errorMessage","Invalid Number");
+			//request.setAttribute("errorMessage","Invalid Number");
+			errorMessage="Invalid Number";
 		}finally {
-			request.getRequestDispatcher("/WEB-INF/CDebit.jsp").forward(request, response);
+			response.sendRedirect(request.getContextPath()+"/page/debit?successMessage="+successMessage+"&errorMessage="+errorMessage);
 		}
 	}
 
 	protected void moneyTransfer(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String errorMessage=null;
+		String successMessage=null;
 		try {
 			HttpSession session = request.getSession();
 			long accountNumber=Long.parseLong(request.getParameter("account"));
@@ -488,14 +502,17 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json, "TransactionAccountNumber", recevingAccount);
 			UtilityHelper.put(json, "IfscCode", ifscCode);
 			customer.moneyTransfer(json);
-			request.setAttribute("successMessage", "Money transfer successfull");
+			//request.setAttribute("successMessage", "Money transfer successfull");
+			successMessage="Money transfer successfull";
 		} catch (BankException | InputDefectException e) {
-			request.setAttribute("errorMessage", e.getMessage());
+			//request.setAttribute("errorMessage", e.getMessage());
+			errorMessage=e.getMessage();
 		}
 		catch (NumberFormatException e) {
-			request.setAttribute("errorMessage","Invalid Number");
+			//request.setAttribute("errorMessage","Invalid Number");
+			errorMessage="Invalid Number";
 		}finally {
-			request.getRequestDispatcher("/WEB-INF/CTransfer.jsp").forward(request, response);
+			response.sendRedirect(request.getContextPath()+"/page/moneyTransfer?successMessage="+successMessage+"&errorMessage="+errorMessage);
 		}
 	}
 
@@ -690,13 +707,14 @@ public class ControllServlet extends HttpServlet {
 			UtilityHelper.put(json,"EmailId",request.getParameter("emailId"));
 			UtilityHelper.put(json,"PhoneNumber",Long.parseLong(request.getParameter("phoneNumber")));
 			UtilityHelper.put(json,"UserType","customer");
-			long id= employee.addUsers(json);
+			//long id= employee.addUsers(json);
 			JSONObject json2=new JSONObject();
-			UtilityHelper.put(json2,"Id",id);
+			//UtilityHelper.put(json2,"Id",id);
 			UtilityHelper.put(json2,"AadharNumber",Long.parseLong(request.getParameter("aadhar")));
 			UtilityHelper.put(json2,"PanNumber",request.getParameter("pan"));
 			UtilityHelper.put(json2,"Address",request.getParameter("address"));
-			employee.addCustomers(json2);
+			//employee.addCustomers(json2);
+			long id= employee.addUserCustomer(json, json2);
 			request.setAttribute("successMessage", "Customer Added ");
 			JSONObject profile = customer.viewProfile(id);
 			request.setAttribute("profile", profile);
@@ -707,6 +725,7 @@ public class ControllServlet extends HttpServlet {
 		}
 		catch (NumberFormatException e) {
 			request.setAttribute("errorMessage","Invalid Number");
+			request.getRequestDispatcher("/WEB-INF/employee/addCustomer.jsp").forward(request, response);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -733,22 +752,28 @@ public class ControllServlet extends HttpServlet {
 
 	protected void addAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		JSONObject json=new JSONObject();
+		String errorMessage=null;
+		String successMessage =null;
 		try {
 			//UtilityHelper.put(json,"AccountNumber",Long.parseLong(request.getParameter("accountNumber")));
 			UtilityHelper.put(json,"Id",Long.parseLong(request.getParameter("userId")));
 			UtilityHelper.put(json,"BranchId",Integer.parseInt(request.getParameter("branchId")));
 			UtilityHelper.put(json,"Balance",Long.parseLong(request.getParameter("balance")));
-			UtilityHelper.put(json,"Status","active");	
+			UtilityHelper.put(json,"Status","active");
+			//request.setAttribute("userId",null);
 			admin.validateBranchId(Integer.parseInt(request.getParameter("branchId")));
 			long AccountNumber= employee.createAccount(json);
-			request.setAttribute("successMessage", "Account "+AccountNumber+" created successfully");
+			//request.setAttribute("successMessage", "Account "+AccountNumber+" created successfully");
+			successMessage = "Account "+AccountNumber+" created successfully";
 		} catch (BankException | InputDefectException e) {
-			e.printStackTrace();
-			request.setAttribute("errorMessage", e.getMessage());
+			//e.printStackTrace();
+			//request.setAttribute("errorMessage", e.getMessage());
+			errorMessage=e.getMessage();
 		} catch (NumberFormatException e) {
-			request.setAttribute("errorMessage","Invalid Number");
+			//request.setAttribute("errorMessage","Invalid Number");
+			errorMessage="Invalid Number";
 		} finally {
-			addAccountGet(request, response);
+				response.sendRedirect(request.getContextPath()+"/page/addAccount?errorMessage="+errorMessage+"&successMessage="+successMessage);
 		}
 	}
 
@@ -881,6 +906,7 @@ public class ControllServlet extends HttpServlet {
 			long id =Long.parseLong(request.getParameter("id"));
 			request.getSession().setAttribute("id",id);
 			employee.checkIdCustomerPresence(id);
+			auth.validateUser(id);
 			customerDetail(request, response);
 		} catch (BankException | InputDefectException e) {
 			request.setAttribute("errorMessage", e.getMessage());

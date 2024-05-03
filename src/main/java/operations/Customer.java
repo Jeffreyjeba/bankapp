@@ -131,7 +131,7 @@ public class Customer {
 			if (!inBank) {
 				long tId = System.currentTimeMillis();
 				TransactionHistory history = historyPojo("OBMoneyTransfer", -amount, tId, accountNumber, description,
-						balanceAmount - amount, null);
+						balanceAmount - amount, trasactionAccountNumber);
 				setTime(tId);
 				customer.creditDebitOutBank(history);
 				LogAgent.log(-amount+"",OperationType.obmoneyTransfer);
@@ -404,5 +404,21 @@ public class Customer {
 
 	protected void checkAccNoForPresence(long accountNumber) throws BankException, InputDefectException {
 		customer.checkAccountPresence(accountNumber,"AccountNumber");
+	}
+	
+	protected void checkPhoneNoForAbsence(long phoneNumber) throws BankException, InputDefectException {
+		customer.checkPhoneNoAbsence(phoneNumber,"PhoneNumber");
+	}
+	
+	protected void checkEmailIdForAbsence(String emailId) throws BankException, InputDefectException {
+		customer.checkEmailIdAbsence(emailId,"EmailId");
+	}
+	
+	protected void checkAadharForAbsence(long aadharNumber) throws BankException, InputDefectException {
+		customer.checkAadharAbsence(aadharNumber,"AadharNumber");
+	}
+	
+	protected void checkpanForAbsence(String panId) throws BankException, InputDefectException {
+		customer.checkPanAbsence(panId,"PanNumber");
 	}
 }

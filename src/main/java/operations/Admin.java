@@ -21,6 +21,7 @@ public class Admin extends Employee {
 		UtilityHelper.nullCheck(branchJson);
 		Branch branch=jsonToBranch(branchJson);
 		validateCreateBranch(branch);
+		checkBranchNameAbsence(branch.getBranchName());
 		setTime();
 		setCreationDetails(branch);
 		long id= admin.createBranch(branch);
@@ -106,6 +107,10 @@ public class Admin extends Employee {
 
 	protected void checkForWorkersPresence(long employeeId) throws BankException, InputDefectException {
 		admin.checkEmployeePrecence(employeeId, "Id");
+	}
+	
+	protected void checkBranchNameAbsence(String BranchName) throws BankException, InputDefectException {
+		admin.checkBranchNameAbsence(BranchName,"BranchName");
 	}
 	
 	

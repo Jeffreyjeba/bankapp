@@ -76,6 +76,7 @@ abstract public class DataStorageService implements DataStorage {
 
 	@Override
 	public JSONObject select(CharSequence seq) throws BankException {
+		//System.out.println(seq);
 		try (Connection connection = getConnection();) {
 			try (Statement statement = connection.createStatement();) {
 				try (ResultSet set = statement.executeQuery(seq.toString());) {

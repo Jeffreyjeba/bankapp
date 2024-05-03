@@ -27,7 +27,6 @@ public class ParameterFilter implements Filter {
 	    			switch (path) {
 	    			case "/LoginAuthendicate":
 	    				if( checkNull(httpRequest,"id","password")) {
-	    					System.out.println("in");
 	    					chain.doFilter(request, response);
 	    				}
 	    				else {
@@ -199,7 +198,7 @@ public class ParameterFilter implements Filter {
 		int length =fields.length;
 		boolean test =true;
 		for(int i=0;i<length;i++) {
-			if(request.getParameter(fields[i])=="") {
+			if(request.getParameter(fields[i])==null|| request.getParameter(fields[i])=="") {
 				test=false;
 				break;
 			}

@@ -57,5 +57,11 @@ public class AdminService extends EmployeeService implements AdminServiceInterfa
 	public void checkEmployeePrecence(long value, String field) throws BankException, InputDefectException {
 		checkLongPresence(value, "employees", field, field);
 	}
+
+	@Override
+	public void checkBranchNameAbsence(String branchName, String field) throws BankException, InputDefectException {
+		checkStringAbsence(branchName,"branch", field, field);
+		
+	}
 	
 }

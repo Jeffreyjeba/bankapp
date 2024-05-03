@@ -21,7 +21,7 @@
     <a href="<%=request.getContextPath()%>/page/profile">Profile</a>
     <br>
     <%if(request.getSession().getAttribute("auth").equals("customer")){ %>
-    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
+    <a href="<%=request.getContextPath()%>/page/resetPassword">Reset Password</a>
     <br>
     <%} %>
 </div>

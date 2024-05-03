@@ -28,5 +28,7 @@ public interface AdminServiceInterface extends EmployeeServiceInterface{
 
 	public void checkEmployeePrecence(long value , String field) throws BankException, InputDefectException ;
 	
+	public void checkBranchNameAbsence(String branchName , String field) throws BankException, InputDefectException ;
+	
 
 }

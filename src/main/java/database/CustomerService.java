@@ -193,6 +193,14 @@ public class CustomerService extends DataStorageService implements CustomerServi
 			throw new BankException(selectionField + "  : " + value + " is alreday present");
 		}
 	}
+	
+	protected void checkStringAbsence(String value, String tableName, String fieldName, String selectionField)
+			throws BankException {
+		JSONObject resultJson = selectWhere(tableName, fieldName + "= '" + value+"'", selectionField);
+		if (resultJson != null) {
+			throw new BankException(selectionField + "  : " + value + " is alreday present");
+		}
+	}
 
 	protected void checkLongPresence(long value, String tableName, String fieldName, String selectionField)
 			throws BankException {
@@ -264,6 +272,30 @@ public class CustomerService extends DataStorageService implements CustomerServi
 	public void logActivity(LogData logData) throws BankException, InputDefectException {
 		StringBuilder logQuery= builder.pojoToAddQuery("auditlog",logData);
 		add(logQuery, logData);
+	}
+
+	@Override
+	public void checkPhoneNoAbsence(long value, String field) throws BankException, InputDefectException {
+		checkLongAbsence(value, "users", field, field);
+		
+	}
+
+	@Override
+	public void checkEmailIdAbsence(String value, String field) throws BankException, InputDefectException {
+		checkStringAbsence(value, "users", field, field);
+		
+	}
+
+	@Override
+	public void checkAadharAbsence(long value, String field) throws BankException, InputDefectException {
+		checkLongAbsence(value, "customers", field, field);
+		
+	}
+
+	@Override
+	public void checkPanAbsence(String value, String field) throws BankException, InputDefectException {
+		checkStringAbsence(value, "customers", field, field);
+		
 	}
 
 

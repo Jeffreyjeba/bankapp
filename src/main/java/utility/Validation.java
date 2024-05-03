@@ -61,6 +61,15 @@ public class Validation {
 		if(address.length()>50) {
 			throw new BankException("Address size exceeded");
 		}
+		if(address.length()<5) {
+			throw new BankException("Address size must be greater than 5");
+		}
+		if(!comparator("[^@!#$%^*_+]*",address)) {
+			throw new BankException("@!#$%^*_+ characters not allowed in address");
+		}
+		if(comparator("^[\\s]{1}", address)) {
+			throw new BankException("No white space at begining of address");
+		}
 	}
 	
 	public  static void description(CharSequence address) throws BankException {

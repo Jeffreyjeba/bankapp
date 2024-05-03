@@ -22,7 +22,7 @@
   <%--   <a href="<%=request.getContextPath()%>/page/initialDetail">Profile</a>
     <!-- Eprofile -->
     <br> --%>
-    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
+    <a href="<%=request.getContextPath()%>/page/resetPassword">Reset Password</a>
     <br>
 </div>
 
@@ -48,10 +48,11 @@
     <br>
     <a href="<%=request.getContextPath()%>/page/addBranch">Add Branch</a>
     <br>
-    <a href="<%=request.getContextPath()%>/page/resetPassword">ResetPassword</a>
-    <br>
     <a href="<%=request.getContextPath()%>/page/manageEmployee">Manage Employee</a>
     <br>
+    <a href="<%=request.getContextPath()%>/page/resetPassword">Reset Password</a>
+    <br>
+    
     
     
 </div>
