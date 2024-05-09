@@ -300,6 +300,7 @@ public class ControllServlet extends HttpServlet {
 		try {
 			long[] accounts = customer.getAccounts(id);
 			long primary = UtilityHelper.getLong(customer.getPrimaryAccount(id), "AccountNumber");
+			System.out.println(primary);
 			HttpSession session = request.getSession();
 			if(session.getAttribute("auth")==null) {
 				session.setAttribute("auth", "customer");
@@ -607,6 +608,7 @@ public class ControllServlet extends HttpServlet {
 			}
 		}
 		catch (BankException | InputDefectException e) {
+			e.printStackTrace();
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		finally {

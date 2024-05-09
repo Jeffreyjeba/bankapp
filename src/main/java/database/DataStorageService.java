@@ -112,6 +112,7 @@ abstract public class DataStorageService implements DataStorage {
 	
 	@Override
 	public boolean update(CharSequence seq,Object...input) throws BankException {
+		
 		try (Connection connection = getConnection();) {
 			try (PreparedStatement preparedStatement = connection.prepareStatement(seq.toString());) {
 				setParameter(preparedStatement,input);
@@ -141,7 +142,7 @@ abstract public class DataStorageService implements DataStorage {
 		try (Connection connection = getConnection();) {
 			try (PreparedStatement preparedStatement = connection.prepareStatement(seq.toString());) {
 				setParameter(preparedStatement, input);
-				System.out.println(preparedStatement);
+				//System.out.println(preparedStatement);
 				return preparedStatement.execute();
 			}
 		}

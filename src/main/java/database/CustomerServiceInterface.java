@@ -50,7 +50,11 @@ public interface CustomerServiceInterface {
 	
 	public JSONObject viewProfile(long id) throws BankException, InputDefectException;
 	
+
+
 	public JSONObject getPrimaryAccount(long id) throws BankException;
+	
+	public void removeAllPrimary(long id) throws BankException;
 	
 	public void setPrimaryAccount(long accountNumber) throws BankException;	
 	

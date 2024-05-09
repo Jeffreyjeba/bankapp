@@ -72,8 +72,8 @@ public class CustomerService extends DataStorageService implements CustomerServi
 		return UtilityHelper.put(jsonResult, "AccountNumber", jsonArray);
 	}
 
-	public JSONObject getPrimaryAccount(long id) throws BankException {
-		StringBuilder query = builder.selectFromWhere("accounts", "Id = " + id + " and Priority='primary'",
+	public JSONObject getPrimaryAccount(long id) throws BankException { //TODO
+		StringBuilder query = builder.selectFromWhere("accounts", "Id = " + id + " and Priority='primary' and Status='active'",
 				"AccountNumber");
 		return select(query);
 	}
@@ -234,7 +234,7 @@ public class CustomerService extends DataStorageService implements CustomerServi
 		StringBuilder query = builder.singleSetWhere("accounts", "Priority", "AccountNumber",
 				Long.toString(accountNumber));
 		if (priority != null) {
-			update(query, priority.name());
+			update(query,"primary"); //TODO
 		} else {
 			String nullString = null;
 			update(query, nullString);
@@ -296,6 +296,13 @@ public class CustomerService extends DataStorageService implements CustomerServi
 	public void checkPanAbsence(String value, String field) throws BankException, InputDefectException {
 		checkStringAbsence(value, "customers", field, field);
 		
+	}
+
+	@Override
+	public void removeAllPrimary(long id) throws BankException {
+		StringBuilder query = builder.singleSetWhere("accounts", "Priority", "Id",Long.toString(id));
+			String nullString = null;
+			update(query, nullString);
 	}
 
 

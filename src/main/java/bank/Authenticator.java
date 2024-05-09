@@ -25,6 +25,7 @@ public class Authenticator {
 	}
 	
 	public boolean login(long userId, String password) throws InputDefectException, BankException {
+		//UtilityHelper.checkNegative(userId);
 		boolean access= checkPassword(userId, password);
 		if(access==true) {
 			UserData userData=new UserData();

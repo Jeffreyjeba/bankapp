@@ -203,6 +203,7 @@ public class Customer {
 		checkIdCustomerPresence(id);
 		JSONObject json= customer.getPrimaryAccount(id);
 		if(json==null) {
+			customer.removeAllPrimary(id);
 			tagPrimaryAccount(id);
 			getPrimaryAccount(id);
 			return customer.getPrimaryAccount(id);
@@ -243,12 +244,16 @@ public class Customer {
 	public void checkUserAndAccount(long id,long accountNumber) throws BankException, InputDefectException {
 		Validation.validateUserId(id);
 		Validation.validateAccountNumber(accountNumber);
+		System.out.println(id);
+		System.out.println(accountNumber);
 		checkIdUserPresence(id);
 		checkAccNoForPresence(accountNumber);
 		long accounts[]= getAccounts(id);
 		boolean accountPresence=false;
 		for(int i=0;i<accounts.length;i++) {
+			System.out.println(accounts[i]+" =====account");
 			if(accounts[i]==accountNumber) {
+				
 				accountPresence=true;
 			}
 		}

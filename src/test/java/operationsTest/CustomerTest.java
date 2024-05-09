@@ -13,32 +13,31 @@ public class CustomerTest {
 	
 	Customer customer=new Customer();
 	Admin admin = new Admin();
-  @Test(dataProvider = "accountNumberJson",expectedExceptions = {utility.BankException.class,utility.InputDefectException.class})
-  public void balance(JSONObject json) throws BankException, InputDefectException {
-	  System.out.println(customer.getBalance(json));
-  }
+  
+	 @Test(dataProvider = "accountNumberJson")
+	  public void balance(JSONObject json) throws BankException, InputDefectException {
+		  System.out.println(customer.getBalance(json));
+	  }
 
-  @Test(dataProvider ="accountNumberLong",expectedExceptions = {utility.BankException.class,utility.InputDefectException.class} )
-  public void balance(long accountNumber) throws BankException, InputDefectException {
-	  customer.getBalance(accountNumber);
-  }
- 
-  @Test(dataProvider = "idLong",expectedExceptions = {utility.BankException.class,utility.InputDefectException.class})
-  public void getAccounts(long id) throws BankException, InputDefectException {
-	  System.out.println(customer.getAccounts(id));
-  }
-  
-  @Test(dataProvider = "idLong",expectedExceptions = {utility.BankException.class,utility.InputDefectException.class})
-  public void accountStatus(long accountNumber) throws BankException, InputDefectException {
-	  System.out.println(customer.getAccounts(accountNumber));
-  }
-  
-  @Test(dataProvider = "transactionHistory",expectedExceptions = {utility.BankException.class,utility.InputDefectException.class})
-  public void transactionHistory(int accountNumber,int quantity,int page) throws BankException, InputDefectException {
-	  customer.transactionHistory(accountNumber, quantity, page);
-  }
-  
-  
+	  @Test(dataProvider ="accountNumberLong")
+	  public void balance(long accountNumber) throws BankException, InputDefectException {
+		  customer.getBalance(accountNumber);
+	  }
+	 
+	  @Test(dataProvider = "idLong")
+	  public void getAccounts(long id) throws BankException, InputDefectException {
+		  System.out.println(customer.getAccounts(id));
+	  }
+	  
+	  @Test(dataProvider = "idLong")
+	  public void accountStatus(long accountNumber) throws BankException, InputDefectException {
+		  System.out.println(customer.getAccounts(accountNumber));
+	  }
+	  
+	  @Test(dataProvider = "transactionHistory")
+	  public void transactionHistory(int accountNumber,int quantity,int page) throws BankException, InputDefectException {
+		  customer.transactionHistory(accountNumber, quantity, page);
+	  }
 	@Test(dataProvider = "IdAccount")
   public void idToAccount(long id,long accountNumber) throws BankException, InputDefectException {
 	  customer.checkUserAndAccount(id, accountNumber);
